@@ -15,6 +15,8 @@ require "Logic/CtrlManager"
 require "Common/functions"
 require "Controller/PromptCtrl"
 
+require "FairyGUI"
+
 --管理器--
 Game = {};
 local this = Game;
@@ -32,12 +34,12 @@ end
 
 --初始化完成，发送链接服务器信息--
 function Game.OnInitOK()
-    AppConst.SocketPort = 2012;
-    AppConst.SocketAddress = "127.0.0.1";
-    networkMgr:SendConnect();
+    --AppConst.SocketPort = 2012;
+    --AppConst.SocketAddress = "127.0.0.1";
+    --networkMgr:SendConnect();
 
     --注册LuaView--
-    this.InitViewPanels();
+    -- this.InitViewPanels();
 
     --this.test_class_func();
     --this.test_pblua_func();
@@ -47,12 +49,18 @@ function Game.OnInitOK()
     --this.test_sproto_func();
     --coroutine.start(this.test_coroutine);
 
-    CtrlManager.Init();
-    local ctrl = CtrlManager.GetCtrl(CtrlNames.Prompt);
-    if ctrl ~= nil and AppConst.ExampleMode == 1 then
-        ctrl:Awake();
-    end
-       
+    -- CtrlManager.Init();
+    -- local ctrl = CtrlManager.GetCtrl(CtrlNames.Prompt);
+    -- if ctrl ~= nil and AppConst.ExampleMode == 1 then
+    --    ctrl:Awake();
+    -- end
+
+    GRoot.inst:SetContentScaleFactor(1080,1920)
+    UIPackage.AddPackage('UI/login')
+    local comp = UIPackage.CreateObject('login', 'loginPage')
+    GRoot.inst:AddChild(comp)
+
+
     logWarn('LuaFramework InitOK--->>>');
 end
 
