@@ -1,12 +1,14 @@
 
 CtrlNames = {
-	Prompt = "PromptCtrl",
-	Message = "MessageCtrl"
+	Login = "LoginCtrl"
 }
 
 PanelNames = {
-	"PromptPanel",	
-	"MessagePanel",
+	"LoginPanel"
+}
+
+EventTypes = {
+	LoginEvent = "LoginEvent"
 }
 
 --协议类型--

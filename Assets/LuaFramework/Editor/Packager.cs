@@ -68,10 +68,11 @@ public class Packager {
         maps.Clear();
         if (AppConst.LuaBundleMode) {
             HandleLuaBundle();
-            HandleUIBundle();
+            
         } else {
             HandleLuaFile();
         }
+        HandleUIBundle();
 
         string resPath = "Assets/" + AppConst.AssetDir;
         BuildAssetBundleOptions options = BuildAssetBundleOptions.DeterministicAssetBundle | 
