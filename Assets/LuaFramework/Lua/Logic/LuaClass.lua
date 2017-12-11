@@ -1,6 +1,3 @@
---Author : Administrator
---Date   : 2014/11/25
-
 --声明，这里声明了类名还有属性，并且给出了属性的初始值。
 LuaClass = {x = 0, y = 0}
 

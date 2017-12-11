@@ -2,6 +2,7 @@ require "FairyGUI"
 
 GRoot.inst:SetContentScaleFactor(1080,1920)
 
+---@class WindowBase
 WindowBase = fgui.window_class()
 WindowBase.className = "WindowBase"
 WindowBase.animation = { "", ""}

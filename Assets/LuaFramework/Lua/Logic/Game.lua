@@ -8,21 +8,11 @@ Game = {};
 local this = Game;
 
 
-function Game.InitViewPanels()
-	for i = 1, #PanelNames do
-		require ("View/"..tostring(PanelNames[i]))
-	end
-end
-
 --初始化完成，发送链接服务器信息--
 function Game.OnInitOK()
     --AppConst.SocketPort = 2012;
     --AppConst.SocketAddress = "127.0.0.1";
     --networkMgr:SendConnect();
-
-    --注册LuaView--
-    this.InitViewPanels();
-
 
     CtrlManager.Init();
     local ctrl = CtrlManager.GetCtrl(CtrlNames.Login);

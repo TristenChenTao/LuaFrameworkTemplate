@@ -1,5 +1,5 @@
 require "WindowBase"
---
+
 ----登录界面
 if (not LoginPanel) then
     LoginPanel = fgui.window_class()
@@ -25,7 +25,7 @@ function LoginPanel:BindEvent()
     self.wechatLogin.onClick:Add(function()
         log('wechat click')
 
-        Event.Brocast(EventTypes.LoginEvent,1,"event with message")
+        Event.Brocast(EventTypes.LoginEvent,"event with message")
 
     end)
 end

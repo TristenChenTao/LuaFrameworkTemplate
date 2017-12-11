@@ -1,5 +1,6 @@
 require "Common/define"
 require "Controller/LoginCtrl"
+require "Controller/MainCtrl"
 
 CtrlManager = {};
 local this = CtrlManager;
@@ -8,6 +9,7 @@ local ctrlList = {};	--控制器列表--
 function CtrlManager.Init()
 	logWarn("CtrlManager.Init----->>>");
 	ctrlList[CtrlNames.Login] = LoginCtrl.New();
+	ctrlList[CtrlNames.Main] = MainCtrl.New();
 	return this;
 end
 

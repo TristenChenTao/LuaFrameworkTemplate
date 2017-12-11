@@ -1,10 +1,7 @@
 
 CtrlNames = {
-	Login = "LoginCtrl"
-}
-
-PanelNames = {
-	"LoginPanel"
+	Login = "LoginCtrl",
+	Main = "MainCtrl"
 }
 
 EventTypes = {
