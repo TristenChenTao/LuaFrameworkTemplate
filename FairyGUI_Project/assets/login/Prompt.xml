@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="400,400">
+  <displayList>
+    <component id="n2_g82q" name="mainJoin" src="ytwi3" xy="100,150">
+      <relation target="" sidePair="center-center,middle-middle"/>
+      <Button title="主页进入" titleFontSize="30"/>
+    </component>
+  </displayList>
+</component>

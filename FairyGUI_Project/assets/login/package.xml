@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<packageDescription id="lb23giok" jpegQuality="80" compressPNG="true">
+  <resources>
+    <component id="ytwi0" name="loginPage.xml" path="/" exported="true"/>
+    <component id="ytwi1" name="微信登录.xml" path="/" exported="true"/>
+    <component id="ytwi2" name="Prompt.xml" path="/" exported="true"/>
+    <component id="ytwi3" name="主页进入.xml" path="/" exported="true"/>
+  </resources>
+  <publish name="login"/>
+</packageDescription>

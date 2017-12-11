@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<packageDescription id="9nmrx4p9" jpegQuality="80" compressPNG="true">
+  <resources>
+    <component id="mtsq0" name="MainPage.xml" path="/" exported="true"/>
+  </resources>
+  <publish name="Main"/>
+</packageDescription>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="1080,1920" bgColorEnabled="true">
+  <displayList>
+    <text id="n0_g82q" name="n0" xy="371,858" size="337,203" fontSize="30" align="center" vAlign="middle" autoSize="none" text="主界面&#xA;">
+      <relation target="" sidePair="center-center,middle-middle"/>
+    </text>
+  </displayList>
+</component>
