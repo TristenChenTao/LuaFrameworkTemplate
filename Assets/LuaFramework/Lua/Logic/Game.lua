@@ -38,8 +38,10 @@ function Game.OnInitOK()
     --AppConst.SocketAddress = "127.0.0.1";
     --networkMgr:SendConnect();
 
+    GRoot.inst:SetContentScaleFactor(1080,1920)
+
     --注册LuaView--
-    -- this.InitViewPanels();
+    this.InitViewPanels();
 
     --this.test_class_func();
     --this.test_pblua_func();
@@ -49,17 +51,11 @@ function Game.OnInitOK()
     --this.test_sproto_func();
     --coroutine.start(this.test_coroutine);
 
-    -- CtrlManager.Init();
-    -- local ctrl = CtrlManager.GetCtrl(CtrlNames.Prompt);
-    -- if ctrl ~= nil and AppConst.ExampleMode == 1 then
-    --    ctrl:Awake();
-    -- end
-
-    GRoot.inst:SetContentScaleFactor(1080,1920)
-    UIPackage.AddPackage('UI/login')
-    local comp = UIPackage.CreateObject('login', 'loginPage')
-    GRoot.inst:AddChild(comp)
-
+    CtrlManager.Init();
+    local ctrl = CtrlManager.GetCtrl(CtrlNames.Prompt);
+    if ctrl ~= nil and AppConst.ExampleMode == 1 then
+       ctrl:Awake();
+    end
 
     logWarn('LuaFramework InitOK--->>>');
 end

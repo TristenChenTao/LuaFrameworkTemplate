@@ -23,7 +23,12 @@ end
 
 function PromptCtrl.Awake()
 	logWarn("PromptCtrl.Awake--->>");
-	panelMgr:CreatePanel('Prompt', this.OnCreate);
+    -- panelMgr:CreatePanel('Prompt', this.OnCreate);
+    
+    --加载 UI
+    UIPackage.AddPackage('UI/login')
+    local comp = UIPackage.CreateObject('login', 'loginPage')
+    GRoot.inst:AddChild(comp)
 end
 
 --启动事件--
