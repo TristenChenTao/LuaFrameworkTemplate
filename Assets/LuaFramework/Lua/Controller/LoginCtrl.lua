@@ -20,7 +20,6 @@ function LoginCtrl.Awake()
 
     -- 监听通知事件
     Event.AddListener(EventTypes.LoginEvent, function( ... )
-        logWarn("12312313123123123")
         this.HandleUIEvent(...)
     end);
 
