@@ -219,6 +219,9 @@ public static class CustomSettings
 
         _GT(typeof(TweenUtils)),
 
+        //game extension
+        _GT(typeof(ExUIPackage)),
+
     };
 
     public static List<Type> dynamicList = new List<Type>()

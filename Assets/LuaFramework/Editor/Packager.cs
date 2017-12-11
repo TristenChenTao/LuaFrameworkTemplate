@@ -68,14 +68,15 @@ public class Packager {
         maps.Clear();
         if (AppConst.LuaBundleMode) {
             HandleLuaBundle();
+            HandleUIBundle();
         } else {
             HandleLuaFile();
         }
-        if (AppConst.ExampleMode) {
-            HandleExampleBundle();
-        }
+
         string resPath = "Assets/" + AppConst.AssetDir;
-        BuildPipeline.BuildAssetBundles(resPath, maps.ToArray(), BuildAssetBundleOptions.None, target);
+        BuildAssetBundleOptions options = BuildAssetBundleOptions.DeterministicAssetBundle | 
+                                          BuildAssetBundleOptions.ChunkBasedCompression;
+        BuildPipeline.BuildAssetBundles(resPath, maps.ToArray(), options, target);
         BuildFileIndex();
 
         string streamDir = Application.dataPath + "/" + AppConst.LuaTempDir;
@@ -155,20 +156,6 @@ public class Packager {
     }
 
     /// <summary>
-    /// 处理框架实例包
-    /// </summary>
-    static void HandleExampleBundle() {
-        string resPath = AppDataPath + "/" + AppConst.AssetDir + "/";
-        if (!Directory.Exists(resPath)) Directory.CreateDirectory(resPath);
-
-        AddBuildMap("prompt" + AppConst.ExtName, "*.prefab", "Assets/LuaFramework/Examples/Builds/Prompt");
-        AddBuildMap("message" + AppConst.ExtName, "*.prefab", "Assets/LuaFramework/Examples/Builds/Message");
-
-        AddBuildMap("prompt_asset" + AppConst.ExtName, "*.png", "Assets/LuaFramework/Examples/Textures/Prompt");
-        AddBuildMap("shared_asset" + AppConst.ExtName, "*.png", "Assets/LuaFramework/Examples/Textures/Shared");
-    }
-
-    /// <summary>
     /// 处理Lua文件
     /// </summary>
     static void HandleLuaFile() {
@@ -207,6 +194,56 @@ public class Packager {
         }
         EditorUtility.ClearProgressBar();
         AssetDatabase.Refresh();
+    }
+
+    /// <summary>
+    /// 处理UI素材包
+    /// </summary>
+    static void HandleUIBundle()
+    {
+        string path = Application.streamingAssetsPath + "/" + AppConst.UIDir.ToLower();
+        if (!Directory.Exists(path))
+            Directory.CreateDirectory(path);
+
+        string assetsPath = Application.streamingAssetsPath;
+        string uiPath = Application.dataPath + "/Resources/" + AppConst.UIDir.ToLower();
+        paths.Clear();
+        files.Clear();
+        Recursive(uiPath);
+        foreach (string f in files)
+        {
+            if (f.EndsWith(".bytes") && !f.Contains("@"))
+            {
+                string bundleName = f.Replace(".bytes", "").Replace(uiPath,"");
+                List<string> bundleFiles = GetUIBundlePaths(bundleName, f);
+                AssetBundleBuild build = new AssetBundleBuild();
+                build.assetBundleName = AppConst.UIDir.ToLower() + bundleName.ToLower() + AppConst.ExtName; 
+                build.assetNames = bundleFiles.ToArray();
+                maps.Add(build);
+            }
+        }
+        AssetDatabase.Refresh();
+    }
+
+    static List<string>GetUIBundlePaths(string bundleName,string baseFilePath)
+    {
+        List<string> bundlePaths = new List<string>();
+        foreach (string f in files)
+        {
+            if (!f.Contains(".mate"))
+            {
+                if (f.EndsWith(bundleName + ".bytes"))
+                {
+                    UnityEngine.Debug.Log(bundleName);
+                    bundlePaths.Add("Assets" + f.Replace(Application.dataPath, ""));
+                }
+                if (f.Contains("/" + bundleName + @"@"))
+                {
+                    bundlePaths.Add("Assets" + f.Replace(Application.dataPath, ""));
+                }
+            }
+        }
+        return bundlePaths;
     }
 
     static void BuildFileIndex() {
