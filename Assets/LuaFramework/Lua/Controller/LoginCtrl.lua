@@ -23,7 +23,7 @@ function LoginCtrl:Awake()
     -- 监听通知事件
     Event.AddListener(EventTypes.LoginEvent, function( ... )
         this:HandleUIEvent(...)
-    end);
+    end)
 
     panel:Show()
 
@@ -32,13 +32,25 @@ end
 function LoginCtrl:HandleUIEvent(value1)
     logWarn("value1 is "..value1)
 
-    local ctrl = CtrlManager.GetCtrl(CtrlNames.Main)
-    if ctrl ~= nil then
-        ctrl:Awake()
-        this:Close()
+    -- 场景切换
+    --local ctrl = CtrlManager.GetCtrl(CtrlNames.Main)
+    --if ctrl ~= nil then
+    --    ctrl:Awake()
+    --    this:Close()
+    --end
+
+    Network.Send("loginauto")
+
+    local timer = Timer.New(function( ... )
+        logWarn("LoginCtrl.JoinRoom--->>")
+        Network.Send("JoinDesk:{DeskKey:1001}")
     end
+    , 1, 1, true)
+
+    timer:Start()
 
 end
+
 
 
 function LoginCtrl:Close()

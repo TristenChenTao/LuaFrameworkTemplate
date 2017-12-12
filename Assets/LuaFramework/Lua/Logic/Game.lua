@@ -10,9 +10,13 @@ local this = Game;
 
 --初始化完成，发送链接服务器信息--
 function Game.OnInitOK()
-    --AppConst.SocketPort = 2012;
+
+    AppConst.SocketAddress = "119.23.173.121";
+    AppConst.SocketPort = 3000;
+
     --AppConst.SocketAddress = "127.0.0.1";
-    --networkMgr:SendConnect();
+    --AppConst.SocketPort = 8080;
+    networkMgr:SendConnect();
 
     CtrlManager.Init();
     local ctrl = CtrlManager.GetCtrl(CtrlNames.Login);
@@ -20,7 +24,7 @@ function Game.OnInitOK()
        ctrl:Awake();
     end
 
-    logWarn('LuaFramework InitOK--->>>');
+    logWarn('LuaFramework InitOK--->>>')
 end
 
 
