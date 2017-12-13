@@ -16,7 +16,7 @@ function Game.OnInitOK()
 
     --AppConst.SocketAddress = "127.0.0.1";
     --AppConst.SocketPort = 8080;
-    networkMgr:SendConnect();
+    --networkMgr:SendConnect() -- Network.lua 里处理收发消息
 
     CtrlManager.Init();
     local ctrl = CtrlManager.GetCtrl(CtrlNames.Login);
@@ -25,8 +25,13 @@ function Game.OnInitOK()
     end
 
     logWarn('LuaFramework InitOK--->>>')
+
+    UpdateBeat:Add(Update, self)
 end
 
+function Update()
+    LuaFramework.Util.Log("每帧执行一次");
+end
 
 --销毁--
 function Game.OnDestroy()
