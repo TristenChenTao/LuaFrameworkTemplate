@@ -178,7 +178,7 @@ public static class CustomSettings
         _GT(typeof(DisplayObject)),
         _GT(typeof(Container)),
         _GT(typeof(Stage)),
-        _GT(typeof(Controller)),
+        _GT(typeof(FairyGUI.Controller)),
         _GT(typeof(GObject)),
         _GT(typeof(GGraph)),
         _GT(typeof(GGroup)),

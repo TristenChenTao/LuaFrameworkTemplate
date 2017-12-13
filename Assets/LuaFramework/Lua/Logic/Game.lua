@@ -11,12 +11,13 @@ local this = Game;
 --初始化完成，发送链接服务器信息--
 function Game.OnInitOK()
 
-    AppConst.SocketAddress = "119.23.173.121";
-    AppConst.SocketPort = 3000;
-
-    --AppConst.SocketAddress = "127.0.0.1";
-    --AppConst.SocketPort = 8080;
+    --AppConst.SocketAddress = "119.23.173.121";
+    --AppConst.SocketPort = 3000;
     --networkMgr:SendConnect() -- Network.lua 里处理收发消息
+    --
+    ---- Socket 发包
+    --Network.Send("loginauto")
+
 
     CtrlManager.Init();
     local ctrl = CtrlManager.GetCtrl(CtrlNames.Login);

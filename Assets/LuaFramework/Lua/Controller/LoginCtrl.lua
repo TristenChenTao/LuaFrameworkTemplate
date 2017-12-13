@@ -39,16 +39,8 @@ function LoginCtrl:HandleUIEvent(value1)
     --    this:Close()
     --end
 
-    Network.Send("loginauto")
-
-    local timer = Timer.New(function( ... )
-        logWarn("LoginCtrl.JoinRoom--->>")
-        Network.Send("JoinDesk:{DeskKey:1001}")
-    end
-    , 1, 1, true)
-
-    timer:Start()
-
+    -- FariyGUI 控制器切换
+    panel.contentPane:GetController("c1").selectedIndex = 1
 end
 
 

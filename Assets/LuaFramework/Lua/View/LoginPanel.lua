@@ -27,5 +27,7 @@ function LoginPanel:BindEvent()
 
         Event.Brocast(EventTypes.LoginEvent,"event with message")
 
+        -- FariyGUI 控制器切换
+        --self.contentPane:GetController("c1").selectedIndex = 1
     end)
 end

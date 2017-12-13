@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component size="1080,1920" bgColorEnabled="true" bgColor="#ff0000">
+  <controller name="c1" pages="0,,1," selected="0"/>
   <displayList>
-    <component id="n1_sjed" name="wechatLogin" src="ytwi1" xy="440,910">
+    <component id="n1_sjed" name="wechatLogin" src="ytwi1" xy="440,200">
+      <gearXY controller="c1" pages="0" values="440,200" default="440,910" tween="true"/>
       <relation target="" sidePair="center-center,middle-middle"/>
       <Button title="微信登录" titleFontSize="30"/>
     </component>

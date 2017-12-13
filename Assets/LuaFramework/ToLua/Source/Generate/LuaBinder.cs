@@ -10,7 +10,6 @@ public static class LuaBinder
 		float t = Time.realtimeSinceStartup;
 		L.BeginModule(null);
 		LuaInterface_DebuggerWrap.Register(L);
-		ControllerWrap.Register(L);
 		TweenUtilsWrap.Register(L);
 		ExUIPackageWrap.Register(L);
 		ViewWrap.Register(L);
@@ -107,6 +106,7 @@ public static class LuaBinder
 		FairyGUI_DisplayObjectWrap.Register(L);
 		FairyGUI_ContainerWrap.Register(L);
 		FairyGUI_StageWrap.Register(L);
+		FairyGUI_ControllerWrap.Register(L);
 		FairyGUI_GObjectWrap.Register(L);
 		FairyGUI_GGraphWrap.Register(L);
 		FairyGUI_GGroupWrap.Register(L);
