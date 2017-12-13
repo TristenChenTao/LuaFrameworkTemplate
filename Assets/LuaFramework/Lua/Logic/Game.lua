@@ -18,7 +18,6 @@ function Game.OnInitOK()
     ---- Socket 发包
     --Network.Send("loginauto")
 
-
     CtrlManager.Init();
     local ctrl = CtrlManager.GetCtrl(CtrlNames.Login);
     if ctrl ~= nil then
