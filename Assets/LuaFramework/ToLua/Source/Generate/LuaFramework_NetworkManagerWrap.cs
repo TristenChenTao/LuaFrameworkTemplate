@@ -76,7 +76,7 @@ public class LuaFramework_NetworkManagerWrap
 		{
 			ToLua.CheckArgsCount(L, 2);
 			int arg0 = (int)LuaDLL.luaL_checknumber(L, 1);
-			LuaFramework.ByteBuffer arg1 = (LuaFramework.ByteBuffer)ToLua.CheckObject<LuaFramework.ByteBuffer>(L, 2);
+			string arg1 = ToLua.CheckString(L, 2);
 			LuaFramework.NetworkManager.AddEvent(arg0, arg1);
 			return 0;
 		}
@@ -109,17 +109,10 @@ public class LuaFramework_NetworkManagerWrap
 		{
 			int count = LuaDLL.lua_gettop(L);
 
-			if (count == 2 && TypeChecker.CheckTypes<string>(L, 2))
+			if (count == 2)
 			{
 				LuaFramework.NetworkManager obj = (LuaFramework.NetworkManager)ToLua.CheckObject<LuaFramework.NetworkManager>(L, 1);
-				string arg0 = ToLua.ToString(L, 2);
-				obj.SendMessage(arg0);
-				return 0;
-			}
-			else if (count == 2 && TypeChecker.CheckTypes<LuaFramework.ByteBuffer>(L, 2))
-			{
-				LuaFramework.NetworkManager obj = (LuaFramework.NetworkManager)ToLua.CheckObject<LuaFramework.NetworkManager>(L, 1);
-				LuaFramework.ByteBuffer arg0 = (LuaFramework.ByteBuffer)ToLua.ToObject(L, 2);
+				string arg0 = ToLua.CheckString(L, 2);
 				obj.SendMessage(arg0);
 				return 0;
 			}

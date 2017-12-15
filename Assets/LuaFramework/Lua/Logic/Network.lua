@@ -22,14 +22,13 @@ function Network.Start()
 end
 
 --Socket消息--
-function Network.OnSocket(key, data)
-
+function Network.OnSocket(key, str)
     Event.Brocast(tostring(key), data)
-
-    local str = data:ReadString();
+    
+    logWarn("OnSocket key : "..key)
     logWarn("OnSocket data : "..str)
-
-    logWarn("OnSocket key : "..tostring(key))
+    
+    
 end
 
 --当连接建立时--
@@ -76,15 +75,10 @@ end
 
 
 ---@param data string
-function Network.Send(data)
-    logWarn("client send data :"..data)
+function Network.Send(str)
+    logWarn("client send data :"..str)
 
-    local buffer = ByteBuffer.New()
-
-    buffer:WriteShort(Protocal.Message)
-    buffer:WriteString(data)
-
-    networkMgr:SendMessage(buffer)
+    networkMgr:SendMessage(str)
 end
 
 function Network.StartHeartBeat()

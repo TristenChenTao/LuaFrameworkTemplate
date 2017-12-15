@@ -11,10 +11,10 @@ local this = Game;
 --初始化完成，发送链接服务器信息--
 function Game.OnInitOK()
 
-    --AppConst.SocketAddress = "119.23.173.121";
-    --AppConst.SocketPort = 3000;
-    --networkMgr:SendConnect() -- Network.lua 里处理收发消息
-    --
+    AppConst.SocketAddress = "120.24.247.165";
+    AppConst.SocketPort = 3000;
+    networkMgr:SendConnect() -- Network.lua 里处理收发消息
+
     ---- Socket 发包
     --Network.Send("loginauto")
 
@@ -26,7 +26,7 @@ function Game.OnInitOK()
 
     logWarn('LuaFramework InitOK--->>>')
 
-    UpdateBeat:Add(Update, self)
+    --UpdateBeat:Add(Update, self)
 end
 
 function Update()

@@ -75,7 +75,9 @@ public class SocketClient {
     void OnConnect(IAsyncResult asr) {
         outStream = client.GetStream();
         client.GetStream().BeginRead(byteBuffer, 0, MAX_READ, new AsyncCallback(OnRead), null);
-        NetworkManager.AddEvent(Protocal.Connect, new ByteBuffer());
+        // NetworkManager.AddEvent(Protocal.Connect, new ByteBuffer());
+
+        NetworkManager.AddEvent(Protocal.Connect, "");
     }
 
     /// <summary>
@@ -86,7 +88,10 @@ public class SocketClient {
         using (ms = new MemoryStream()) {
             ms.Position = 0;
             BinaryWriter writer = new BinaryWriter(ms);
-            ushort msglen = (ushort)message.Length;
+
+            //协议体修正(协议：[消息长度4字节][消息内容])
+            // ushort msglen = (ushort)message.Length;
+            int msglen = message.Length;
             writer.Write(msglen);
             writer.Write(message);
             writer.Flush();
@@ -132,9 +137,10 @@ public class SocketClient {
         int protocal = dis == DisType.Exception ?
         Protocal.Exception : Protocal.Disconnect;
 
-        ByteBuffer buffer = new ByteBuffer();
-        buffer.WriteShort((ushort)protocal);
-        NetworkManager.AddEvent(protocal, buffer);
+        // ByteBuffer buffer = new ByteBuffer();
+        // buffer.WriteShort((ushort)protocal);
+        // NetworkManager.AddEvent(protocal, buffer);
+        NetworkManager.AddEvent(protocal, "");
         Debug.LogError("Connection was closed by the server:>" + msg + " Distype:>" + dis);
     }
 
@@ -170,7 +176,11 @@ public class SocketClient {
         //Reset to beginning
         memStream.Seek(0, SeekOrigin.Begin);
         while (RemainingBytes() > 2) {
-            ushort messageLen = reader.ReadUInt16();
+
+            //协议体修正(协议：[消息长度4字节][消息内容])
+            // ushort messageLen = reader.ReadUInt16();
+            int messageLen = reader.ReadInt32();
+
             if (RemainingBytes() >= messageLen) {
                 MemoryStream ms = new MemoryStream();
                 BinaryWriter writer = new BinaryWriter(ms);
@@ -179,7 +189,10 @@ public class SocketClient {
                 OnReceivedMessage(ms);
             } else {
                 //Back up the position two bytes
-                memStream.Position = memStream.Position - 2;
+
+                //协议体修正(协议：[消息长度4字节][消息内容])
+                memStream.Position = memStream.Position - 4;
+                // memStream.Position = memStream.Position - 2;
                 break;
             }
         }
@@ -206,8 +219,16 @@ public class SocketClient {
         //int msglen = message.Length;
 
         ByteBuffer buffer = new ByteBuffer(message);
-        int mainId = buffer.ReadShort();
-        NetworkManager.AddEvent(mainId, buffer);
+        var messageString = System.Text.Encoding.UTF8.GetString(message);
+
+        Debug.Log("received message is :"+ messageString);
+
+        //协议体修正(协议：[消息长度4字节][消息内容])
+        //取消协议字段
+        // int mainId = buffer.ReadShort();
+        // NetworkManager.AddEvent(mainId, buffer);
+
+        NetworkManager.AddEvent(104, messageString);
     }
 
 
@@ -239,8 +260,9 @@ public class SocketClient {
     /// <summary>
     /// 发送消息
     /// </summary>
-    public void SendMessage(ByteBuffer buffer) {
-        SessionSend(buffer.ToBytes());
-        buffer.Close();
+    public void SendMessage(String str) {
+        byte[] bytes = System.Text.Encoding.UTF8.GetBytes(str.ToCharArray());
+        SessionSend(bytes);
+        // buffer.Close();
     }
 }

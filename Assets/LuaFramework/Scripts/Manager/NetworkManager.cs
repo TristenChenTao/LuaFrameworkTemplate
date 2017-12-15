@@ -8,7 +8,7 @@ namespace LuaFramework {
     public class NetworkManager : Manager {
         private SocketClient socket;
         static readonly object m_lockObject = new object();
-        static Queue<KeyValuePair<int, ByteBuffer>> mEvents = new Queue<KeyValuePair<int, ByteBuffer>>();
+        static Queue<KeyValuePair<int, String>> mEvents = new Queue<KeyValuePair<int, String>>();
 
         SocketClient SocketClient {
             get { 
@@ -35,47 +35,47 @@ namespace LuaFramework {
         }
 
         /// <summary>
-        /// Ö´ÐÐLua·½·¨
+        /// Ö´ï¿½ï¿½Luaï¿½ï¿½ï¿½ï¿½
         /// </summary>
         public object[] CallMethod(string func, params object[] args) {
             return Util.CallMethod("Network", func, args);
         }
 
         ///------------------------------------------------------------------------------------
-        public static void AddEvent(int _event, ByteBuffer data) {
+        public static void AddEvent(int _event, String str) {
             lock (m_lockObject) {
-                mEvents.Enqueue(new KeyValuePair<int, ByteBuffer>(_event, data));
+                mEvents.Enqueue(new KeyValuePair<int, String>(_event, str));
             }
         }
 
         /// <summary>
-        /// ½»¸øCommand£¬ÕâÀï²»Ïë¹ØÐÄ·¢¸øË­¡£
+        /// ï¿½ï¿½ï¿½ï¿½Commandï¿½ï¿½ï¿½ï¿½ï¿½ï²»ï¿½ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ï¿½Ë­ï¿½ï¿½
         /// </summary>
         void Update() {
             if (mEvents.Count > 0) {
                 while (mEvents.Count > 0) {
-                    KeyValuePair<int, ByteBuffer> _event = mEvents.Dequeue();
+                    KeyValuePair<int, String> _event = mEvents.Dequeue();
                     facade.SendMessageCommand(NotiConst.DISPATCH_MESSAGE, _event);
                 }
             }
         }
 
         /// <summary>
-        /// ·¢ËÍÁ´½ÓÇëÇó
+        /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         /// </summary>
         public void SendConnect() {
             SocketClient.SendConnect();
         }
 
         /// <summary>
-        /// ·¢ËÍSOCKETÏûÏ¢
+        /// ï¿½ï¿½ï¿½ï¿½SOCKETï¿½ï¿½Ï¢
         /// </summary>
-        public void SendMessage(ByteBuffer buffer) {
-            SocketClient.SendMessage(buffer);
+        public void SendMessage(String str) {
+            SocketClient.SendMessage(str);
         }
 
         /// <summary>
-        /// Îö¹¹º¯Êý
+        /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         /// </summary>
         new void OnDestroy() {
             SocketClient.OnRemove();
