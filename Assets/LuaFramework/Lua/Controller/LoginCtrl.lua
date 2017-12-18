@@ -40,10 +40,10 @@ function LoginCtrl:HandleUIEvent(value1)
     --end
 
     -- FariyGUI 控制器切换
-    --panel.contentPane:GetController("c1").selectedIndex = 1
+    panel.contentPane:GetController("c1").selectedIndex = 1
 
     -- 调用自定义 C# 方法
-    CustomCSharpMethod.Run()
+    -- CustomCSharpMethod.Run()
 end
 
 
