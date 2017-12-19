@@ -221,14 +221,16 @@ public class SocketClient {
         ByteBuffer buffer = new ByteBuffer(message);
         var messageString = System.Text.Encoding.UTF8.GetString(message);
 
-        Debug.Log("received message is :"+ messageString);
+        Debug.Log("服务端发送命令："+ messageString);
+
+        
 
         //协议体修正(协议：[消息长度4字节][消息内容])
         //取消协议字段
         // int mainId = buffer.ReadShort();
         // NetworkManager.AddEvent(mainId, buffer);
 
-        NetworkManager.AddEvent(104, messageString);
+        NetworkManager.AddEvent(Protocal.Message, messageString);
     }
 
 

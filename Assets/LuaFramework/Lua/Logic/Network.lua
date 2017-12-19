@@ -3,6 +3,8 @@ require "Common/define"
 require "Common/protocal"
 require "Common/functions"
 
+local cjson = require "cjson"
+
 Event = require 'events'
 
 Network = {};
@@ -24,11 +26,27 @@ end
 --Socket消息--
 function Network.OnSocket(key, str)
     Event.Brocast(tostring(key), data)
-    
+
     logWarn("OnSocket key : "..key)
     logWarn("OnSocket data : "..str)
     
-    
+    -- 解析服务端 Socket 协议体数据
+    local actionIndex = string.find(str, ':{')
+    if actionIndex ~= nil then
+        local action = string.sub(str,0,actionIndex - 1)
+        logWarn("action "..action)
+
+        local jsonString = string.sub(str,actionIndex + 1,string.len(str))
+        logWarn("jsonString "..jsonString)
+
+        local jsonData = cjson.decode(jsonString)
+
+        logWarn("Message is"..jsonData['Message']);
+        logWarn("Code is"..jsonData['Code']);
+    else
+        logWarn("找不协议命令")
+    end
+
 end
 
 --当连接建立时--
@@ -41,8 +59,6 @@ end
 --当收到消息--
 function Network.OnMessage(buffer)
 
-    local str = buffer:ReadString();
-    logWarn('OnMessage-------->>>'..str);
 end
 
 --异常断线--

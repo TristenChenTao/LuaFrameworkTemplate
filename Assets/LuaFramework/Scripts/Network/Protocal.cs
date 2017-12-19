@@ -2,8 +2,10 @@
 namespace LuaFramework {
     public class Protocal {
         ///BUILD TABLE
-        public const int Connect = 101;     //连接服务器
-        public const int Exception = 102;     //异常掉线
-        public const int Disconnect = 103;     //正常断线   
+        public const int Connect = 101;     //杩炴帴鎴愬姛
+        public const int Exception = 102;     //寮傚父
+        public const int Disconnect = 103;     //鏂嚎 
+
+        public const int Message = 104;     //娑堟伅锛堜笟鍔℃秷鎭級 
     }
 }
