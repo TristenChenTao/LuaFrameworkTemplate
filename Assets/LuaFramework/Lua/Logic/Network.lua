@@ -25,28 +25,10 @@ end
 
 --Socket消息--
 function Network.OnSocket(key, str)
-    Event.Brocast(tostring(key), data)
+    Event.Brocast(tostring(key), str)
 
-    logWarn("OnSocket key : "..key)
-    logWarn("OnSocket data : "..str)
-    
-    -- 解析服务端 Socket 协议体数据
-    local actionIndex = string.find(str, ':{')
-    if actionIndex ~= nil then
-        local action = string.sub(str,0,actionIndex - 1)
-        logWarn("action "..action)
-
-        local jsonString = string.sub(str,actionIndex + 1,string.len(str))
-        logWarn("jsonString "..jsonString)
-
-        local jsonData = cjson.decode(jsonString)
-
-        logWarn("Message is"..jsonData['Message']);
-        logWarn("Code is"..jsonData['Code']);
-    else
-        logWarn("找不协议命令")
-    end
-
+    -- logWarn("OnSocket key : "..key)
+    -- logWarn("OnSocket data : "..str)
 end
 
 --当连接建立时--
@@ -54,11 +36,28 @@ function Network.OnConnect()
     logWarn("Game Server connected!!")
 
     Network.StartHeartBeat()
+
 end
 
 --当收到消息--
-function Network.OnMessage(buffer)
+function Network.OnMessage(str)
 
+    -- 解析服务端 Socket 协议体数据
+    local actionIndex = string.find(str, ':{')
+    if actionIndex ~= nil then
+        local action = string.sub(str,3,actionIndex - 1)
+        logWarn("action "..action)
+            
+        local jsonString = string.sub(str,actionIndex + 1,string.len(str))
+        logWarn("jsonString "..jsonString)
+            
+        local jsonData = cjson.decode(jsonString)
+            
+        logWarn("Message is"..jsonData['Message']);
+        logWarn("Code is"..jsonData['Code']);
+    else
+        logWarn("找不协议命令")
+    end
 end
 
 --异常断线--
