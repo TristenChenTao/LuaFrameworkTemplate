@@ -5,6 +5,7 @@
     <component id="ytwi1" name="微信登录.xml" path="/" exported="true"/>
     <component id="ytwi2" name="Prompt.xml" path="/" exported="true"/>
     <component id="ytwi3" name="主页进入.xml" path="/" exported="true"/>
+    <image id="wnyv4" name="启动页资源.png" path="/Resource/" exported="true"/>
   </resources>
   <publish name="login"/>
 </packageDescription>

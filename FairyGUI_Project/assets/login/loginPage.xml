@@ -2,8 +2,11 @@
 <component size="1080,1920" bgColorEnabled="true" bgColor="#ff0000">
   <controller name="c1" pages="0,,1," selected="0"/>
   <displayList>
-    <component id="n1_sjed" name="wechatLogin" src="ytwi1" xy="440,200">
-      <gearXY controller="c1" pages="0" values="440,200" default="440,910" tween="true"/>
+    <loader id="n4_wnyv" name="background" xy="0,0" size="1080,1920" url="ui://lb23giokwnyv4">
+      <relation target="" sidePair="width-width,height-height"/>
+    </loader>
+    <component id="n1_sjed" name="wechatLogin" src="ytwi1" xy="440,910">
+      <gearXY controller="c1" pages="0,1" values="440,910|440,200" tween="true"/>
       <relation target="" sidePair="center-center,middle-middle"/>
       <Button title="微信登录" titleFontSize="30"/>
     </component>
