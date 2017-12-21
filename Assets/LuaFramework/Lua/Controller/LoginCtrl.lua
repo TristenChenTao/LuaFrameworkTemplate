@@ -33,14 +33,14 @@ function LoginCtrl:HandleUIEvent(value1)
     logWarn("value1 is "..value1)
 
     -- 场景切换
-    local ctrl = CtrlManager.GetCtrl(CtrlNames.Main)
-    if ctrl ~= nil then
-       ctrl:Awake()
-       this:Close()
-    end
+    -- local ctrl = CtrlManager.GetCtrl(CtrlNames.Main)
+    -- if ctrl ~= nil then
+    --    ctrl:Awake()
+    --    this:Close()
+    -- end
 
     -- FariyGUI 控制器切换
-    -- panel.contentPane:GetController("c1").selectedIndex = 1
+    panel.contentPane:GetController("c1").selectedIndex = 1
 
     -- 调用自定义 C# 方法
     -- CustomCSharpMethod.Run()
