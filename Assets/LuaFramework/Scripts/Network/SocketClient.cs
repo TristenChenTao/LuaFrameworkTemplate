@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Collections;
 using System.Collections.Generic;
 using LuaFramework;
+using System.Threading;
 
 public enum DisType {
     Exception,
@@ -21,6 +22,8 @@ public class SocketClient {
     private const int MAX_READ = 8192;
     private byte[] byteBuffer = new byte[MAX_READ];
     public static bool loggedIn = false;
+
+    private Thread _heartThread;
 
     // Use this for initialization
     public SocketClient() {
@@ -73,6 +76,9 @@ public class SocketClient {
     /// 连接上服务器
     /// </summary>
     void OnConnect(IAsyncResult asr) {
+        _heartThread = new Thread(SendHeart);
+        _heartThread.Start();
+
         outStream = client.GetStream();
         client.GetStream().BeginRead(byteBuffer, 0, MAX_READ, new AsyncCallback(OnRead), null);
         // NetworkManager.AddEvent(Protocal.Connect, new ByteBuffer());
@@ -223,8 +229,6 @@ public class SocketClient {
 
         Debug.Log("服务端发送命令："+ messageString);
 
-        
-
         //协议体修正(协议：[消息长度4字节][消息内容])
         //取消协议字段
         // int mainId = buffer.ReadShort();
@@ -245,6 +249,12 @@ public class SocketClient {
     /// 关闭链接
     /// </summary>
     public void Close() {
+
+        if (_heartThread != null){
+            _heartThread.Abort();
+            _heartThread = null;
+        }
+        
         if (client != null) {
             if (client.Connected) client.Close();
             client = null;
@@ -266,5 +276,27 @@ public class SocketClient {
         byte[] bytes = System.Text.Encoding.UTF8.GetBytes(str.ToCharArray());
         SessionSend(bytes);
         // buffer.Close();
+    }
+
+    /// <summary>
+    ///发送心跳包
+    /// </summary>  
+    private void SendHeart() {
+        if(AppConst.heartInterval <= 0) {
+            Debug.LogError("心跳包时间间隔小雨等于0");
+            return;
+        }
+        while (true) {
+            try {
+                SendMessage("heart");
+                Thread.Sleep(AppConst.heartInterval);
+            }
+            catch (ThreadAbortException e) {
+                Debug.LogError("SendHeart Thread Abort Exception message =" + e);
+            }
+            finally {
+                Debug.Log("Couldn't catch the Thread Exception");
+            }
+        }
     }
 }
