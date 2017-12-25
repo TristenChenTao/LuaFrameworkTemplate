@@ -10,9 +10,6 @@ Event = require 'events'
 Network = {};
 local this = Network;
 
----@type Timer
-local HeartBeatTimer;
-
 local islogging = false;
 
 function Network.Start() 
@@ -34,8 +31,6 @@ end
 --当连接建立时--
 function Network.OnConnect()
     logWarn("Game Server connected!!")
-
-    Network.StartHeartBeat()
 
 end
 
@@ -63,7 +58,6 @@ end
 --异常断线--
 function Network.OnException()
     islogging = false;
-    HeartBeatTimer:Stop()
 
     NetManager:SendConnect();
    	logError("OnException------->>>>");
@@ -72,8 +66,6 @@ end
 --连接中断，或者被踢掉--
 function Network.OnDisconnect()
     islogging = false;
-
-    HeartBeatTimer:Stop()
 
     logError("OnDisconnect------->>>>");
 end
@@ -94,16 +86,4 @@ function Network.Send(str)
     logWarn("client send data :"..str)
 
     networkMgr:SendMessage(str)
-end
-
-function Network.StartHeartBeat()
-    if (not HeartBeatTimer) then
-        HeartBeatTimer = Timer.New(function( ... )
-
-            Network.Send("Heart")
-
-        end, 1, -1, true)
-    end
-
-    HeartBeatTimer:Start()
 end
