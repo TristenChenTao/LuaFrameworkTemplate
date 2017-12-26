@@ -15,8 +15,13 @@ ProtocalType = {
 	PBC = 2,
 	SPROTO = 3,
 }
---当前使用的协议类型--
-TestProtoType = ProtocalType.BINARY;
+
+
+AuthorizePlatformType = {
+	WeChat = 1,
+	QQ = 2,
+	Weibo = 3
+}
 
 Util = LuaFramework.Util;
 AppConst = LuaFramework.AppConst;

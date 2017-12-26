@@ -46,14 +46,21 @@ function LoginCtrl:HandleUIEvent(value1)
     -- CustomCSharpMethod.Run()
 
     -- 三方登录
-    ThirdPlatformTool.Authorize(1);
+    ThirdPlatformTool.Authorize(AuthorizePlatformType.WeChat, this.AuthorResponse)
 end
-
-
 
 
 function LoginCtrl:Close()
     logWarn("LoginCtrl.Close--->>")
 
     panel:Hide();
+end
+
+
+function LoginCtrl.AuthorResponse(state, message, jsonInfo)
+    logWarn("LoginCtrl.AuthorResponse--->>")
+
+    logWarn("state is "..state)
+    logWarn("message is "..message)
+    logWarn("jsonInfo is "..jsonInfo)
 end

@@ -13,6 +13,7 @@ public class ThirdPlatformToolWrap
 		L.RegFunction("OnShareResultHandler", OnShareResultHandler);
 		L.RegFunction("New", _CreateThirdPlatformTool);
 		L.RegFunction("__tostring", ToLua.op_ToString);
+		L.RegVar("_SSDK", get__SSDK, set__SSDK);
 		L.EndClass();
 	}
 
@@ -45,10 +46,25 @@ public class ThirdPlatformToolWrap
 	{
 		try
 		{
-			ToLua.CheckArgsCount(L, 1);
-			int arg0 = (int)LuaDLL.luaL_checknumber(L, 1);
-			ThirdPlatformTool.Authorize(arg0);
-			return 0;
+			int count = LuaDLL.lua_gettop(L);
+
+			if (count == 1)
+			{
+				int arg0 = (int)LuaDLL.luaL_checknumber(L, 1);
+				ThirdPlatformTool.Authorize(arg0);
+				return 0;
+			}
+			else if (count == 2)
+			{
+				int arg0 = (int)LuaDLL.luaL_checknumber(L, 1);
+				LuaFunction arg1 = ToLua.CheckLuaFunction(L, 2);
+				ThirdPlatformTool.Authorize(arg0, arg1);
+				return 0;
+			}
+			else
+			{
+				return LuaDLL.luaL_throw(L, "invalid arguments to method: ThirdPlatformTool.Authorize");
+			}
 		}
 		catch (Exception e)
 		{
@@ -105,6 +121,35 @@ public class ThirdPlatformToolWrap
 			cn.sharesdk.unity3d.PlatformType arg2 = (cn.sharesdk.unity3d.PlatformType)ToLua.CheckObject(L, 3, typeof(cn.sharesdk.unity3d.PlatformType));
 			System.Collections.Hashtable arg3 = (System.Collections.Hashtable)ToLua.CheckObject<System.Collections.Hashtable>(L, 4);
 			ThirdPlatformTool.OnShareResultHandler(arg0, arg1, arg2, arg3);
+			return 0;
+		}
+		catch (Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int get__SSDK(IntPtr L)
+	{
+		try
+		{
+			ToLua.Push(L, ThirdPlatformTool._SSDK);
+			return 1;
+		}
+		catch (Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int set__SSDK(IntPtr L)
+	{
+		try
+		{
+			cn.sharesdk.unity3d.ShareSDK arg0 = (cn.sharesdk.unity3d.ShareSDK)ToLua.CheckObject<cn.sharesdk.unity3d.ShareSDK>(L, 2);
+			ThirdPlatformTool._SSDK = arg0;
 			return 0;
 		}
 		catch (Exception e)
