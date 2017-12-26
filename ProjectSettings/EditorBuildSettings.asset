@@ -4,7 +4,4 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes:
-  - enabled: 1
-    path: Assets/ShareSDK-Unity.unity
-    guid: bc845109f020e496d807044ba558e4b0
+  m_Scenes: []

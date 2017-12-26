@@ -221,6 +221,7 @@ public static class CustomSettings
 
         //game extension
         _GT(typeof(ExUIPackage)),
+        _GT(typeof(ThirdPlatformTool)),
 
         //custom extension
         _GT(typeof(CustomCSharpMethod)),

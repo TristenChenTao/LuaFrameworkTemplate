@@ -29,5 +29,7 @@ function LoginPanel:BindEvent()
 
         -- FariyGUI 控制器切换
         --self.contentPane:GetController("c1").selectedIndex = 1
+
+        
     end)
 end
