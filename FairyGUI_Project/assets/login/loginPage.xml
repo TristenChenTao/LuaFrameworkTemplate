@@ -5,10 +5,18 @@
     <loader id="n4_wnyv" name="background" xy="0,0" size="1080,1920" url="ui://lb23giokwnyv4">
       <relation target="" sidePair="width-width,height-height"/>
     </loader>
-    <component id="n1_sjed" name="wechatLogin" src="ytwi1" xy="440,910">
-      <gearXY controller="c1" pages="0,1" values="440,910|440,200" tween="true"/>
-      <relation target="" sidePair="center-center,middle-middle"/>
+    <component id="n1_sjed" name="wechatLogin" src="ytwi1" xy="140,1700" size="800,100">
+      <gearXY controller="c1" pages="0,1" values="140,1700|440,200" tween="true"/>
+      <relation target="" sidePair="center-center,bottom-bottom%"/>
+      <relation target="" sidePair="width-width%"/>
       <Button title="微信登录" titleFontSize="30"/>
     </component>
+    <text id="n5_aj2j" name="updateTitle" xy="440,47" size="200,38" fontSize="30" color="#ffffff" align="center" vAlign="middle" leading="1" autoSize="none" text="更新状态">
+      <relation target="" sidePair="center-center,top-top%"/>
+    </text>
+    <text id="n6_aj2j" name="updateDetail" xy="140,113" size="800,304" fontSize="20" color="#ffffff" leading="1" autoSize="none" text="更新详情：">
+      <relation target="" sidePair="center-center,top-top%"/>
+      <relation target="" sidePair="width-width%"/>
+    </text>
   </displayList>
 </component>
