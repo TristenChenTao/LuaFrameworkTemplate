@@ -11,9 +11,9 @@ local this = Game;
 --初始化完成，发送链接服务器信息--
 function Game.OnInitOK()
 
-    AppConst.SocketAddress = "119.23.173.121";
-    AppConst.SocketPort = 4020;
-    networkMgr:SendConnect() -- Network.lua 里处理收发消息
+    -- AppConst.SocketAddress = "119.23.173.121";
+    -- AppConst.SocketPort = 4020;
+    -- networkMgr:SendConnect() -- Network.lua 里处理收发消息
 
     ---- Socket 发包
     --Network.Send("loginauto")
@@ -27,6 +27,8 @@ function Game.OnInitOK()
     logWarn('LuaFramework InitOK--->>>')
 
     --UpdateBeat:Add(Update, self)
+
+    this.TestHTTP()
 end
 
 function Update()
@@ -36,4 +38,23 @@ end
 --销毁--
 function Game.OnDestroy()
 	--logWarn('OnDestroy--->>>');
+end
+
+
+function Game.TestHTTP()
+
+    local parameter = WWWForm()
+    parameter:AddField("test1", 1) -- 传入参数
+
+    local url = URL_Domain..HTTPRelativeURL.GetDeskCardOneCost
+	HTTPClient.Request(HTTPRequestType.Get, url,  parameter, this.ResponseHTTP)
+end
+
+function Game.ResponseHTTP(state,code,message, data)
+    logWarn("Game.ResponseHTTP--->>")
+
+    logWarn("state is "..state)
+    logWarn("code is "..state)
+    logWarn("message is "..message)
+    logWarn("data is "..data)
 end

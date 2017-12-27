@@ -39,6 +39,8 @@ namespace LuaFramework {
 
         public static int heartInterval = 5000;                     //心跳包间隔 单位毫秒
 
+        public static string Product_Version = "1";
+
         public static string FrameworkRoot {
             get {
                 return Application.dataPath + "/" + AppName;

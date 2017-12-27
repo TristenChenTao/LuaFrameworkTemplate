@@ -27,6 +27,7 @@ public class LuaFramework_AppConstWrap
 		L.RegVar("SocketPort", get_SocketPort, set_SocketPort);
 		L.RegVar("SocketAddress", get_SocketAddress, set_SocketAddress);
 		L.RegVar("heartInterval", get_heartInterval, set_heartInterval);
+		L.RegVar("Product_Version", get_Product_Version, set_Product_Version);
 		L.RegVar("FrameworkRoot", get_FrameworkRoot, null);
 		L.EndClass();
 	}
@@ -210,6 +211,20 @@ public class LuaFramework_AppConstWrap
 	}
 
 	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int get_Product_Version(IntPtr L)
+	{
+		try
+		{
+			LuaDLL.lua_pushstring(L, LuaFramework.AppConst.Product_Version);
+			return 1;
+		}
+		catch (Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	static int get_FrameworkRoot(IntPtr L)
 	{
 		try
@@ -275,6 +290,21 @@ public class LuaFramework_AppConstWrap
 		{
 			int arg0 = (int)LuaDLL.luaL_checknumber(L, 2);
 			LuaFramework.AppConst.heartInterval = arg0;
+			return 0;
+		}
+		catch (Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int set_Product_Version(IntPtr L)
+	{
+		try
+		{
+			string arg0 = ToLua.CheckString(L, 2);
+			LuaFramework.AppConst.Product_Version = arg0;
 			return 0;
 		}
 		catch (Exception e)

@@ -16,13 +16,6 @@ ProtocalType = {
 	SPROTO = 3,
 }
 
-
-AuthorizePlatformType = {
-	WeChat = 1,
-	QQ = 2,
-	Weibo = 3
-}
-
 Util = LuaFramework.Util;
 AppConst = LuaFramework.AppConst;
 LuaHelper = LuaFramework.LuaHelper;
@@ -34,4 +27,30 @@ soundMgr = LuaHelper.GetSoundManager();
 networkMgr = LuaHelper.GetNetManager();
 
 WWW = UnityEngine.WWW;
+WWWForm = UnityEngine.WWWForm;
 GameObject = UnityEngine.GameObject;
+
+
+-- 第三方平台
+AuthorizePlatformType = {
+	WeChat = 1,
+	QQ = 2,
+	Weibo = 3
+}
+
+
+-- HTTP
+
+URL_Domain = "http://test.majiang.esgame.com";
+--URL_Domain = "http://120.24.247.165:8016";
+
+HTTPRequestType = {
+	Get = 1,
+	Post = 2
+}
+
+HTTPRelativeURL = {
+	CreateDesk = "/MaJiang/CreateDesk", -- 创建房间(Get)
+	IsExistDesk = "/MaJiang/IsExistDesk", -- 判断房间是否存在(Get)
+	GetDeskCardOneCost = "/MaJiang/GetDeskCardOneCost", -- 获取钻石换房卡比例(Get)
+}
