@@ -66,6 +66,13 @@ namespace LuaFramework {
         public void SendConnect() {
             SocketClient.SendConnect();
         }
+        
+        /// <summary>
+        /// 关掉socket
+        /// </summary>
+        public void CloseConnect() {
+            SocketClient.Close();
+        }
 
         /// <summary>
         /// ����SOCKET��Ϣ
