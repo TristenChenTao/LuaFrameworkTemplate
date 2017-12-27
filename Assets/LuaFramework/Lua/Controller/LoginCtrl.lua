@@ -42,9 +42,6 @@ function LoginCtrl:HandleUIEvent(value1)
     -- FariyGUI 控制器切换
     -- panel.contentPane:GetController("c1").selectedIndex = 1
 
-    -- 调用自定义 C# 方法
-    -- CustomCSharpMethod.Run()
-
     -- 三方登录
     ThirdPlatformTool.Authorize(AuthorizePlatformType.WeChat, this.AuthorResponse)
 end

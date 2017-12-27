@@ -13,7 +13,6 @@ public static class LuaBinder
 		TweenUtilsWrap.Register(L);
 		ExUIPackageWrap.Register(L);
 		ThirdPlatformToolWrap.Register(L);
-		CustomCSharpMethodWrap.Register(L);
 		ViewWrap.Register(L);
 		BaseWrap.Register(L);
 		ManagerWrap.Register(L);
