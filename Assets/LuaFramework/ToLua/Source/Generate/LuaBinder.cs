@@ -146,6 +146,7 @@ public static class LuaBinder
 		FairyGUI_GLuaSliderWrap.Register(L);
 		FairyGUI_GLuaComboBoxWrap.Register(L);
 		FairyGUI_LuaWindowWrap.Register(L);
+		FairyGUI_NTextureWrap.Register(L);
 		L.RegFunction("EventCallback1", FairyGUI_EventCallback1);
 		L.RegFunction("EventCallback0", FairyGUI_EventCallback0);
 		L.RegFunction("ListItemRenderer", FairyGUI_ListItemRenderer);

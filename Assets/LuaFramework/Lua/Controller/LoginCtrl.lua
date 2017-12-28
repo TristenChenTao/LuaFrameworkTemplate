@@ -43,9 +43,10 @@ function LoginCtrl:HandleUIEvent(value1)
     -- panel.contentPane:GetController("c1").selectedIndex = 1
 
     -- 三方登录
-    ThirdPlatformTool.Authorize(AuthorizePlatformType.WeChat, this.AuthorResponse)
-end
+    -- ThirdPlatformTool.Authorize(AuthorizePlatformType.WeChat, this.AuthorResponse)
 
+    
+end
 
 function LoginCtrl:Close()
     logWarn("LoginCtrl.Close--->>")

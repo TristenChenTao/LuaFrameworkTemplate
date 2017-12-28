@@ -49,6 +49,11 @@ HTTPRequestType = {
 	Post = 2
 }
 
+HTTPResponseState = {
+	Sucess = 1,
+	Fail = 0
+}
+
 HTTPRelativeURL = {
 	CreateDesk = "/MaJiang/CreateDesk", -- 创建房间(Get)
 	IsExistDesk = "/MaJiang/IsExistDesk", -- 判断房间是否存在(Get)

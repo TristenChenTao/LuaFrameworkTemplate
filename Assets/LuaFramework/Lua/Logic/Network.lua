@@ -46,6 +46,7 @@ function Network.OnMessage(str)
         local jsonString = string.sub(str,actionIndex + 1,string.len(str))
         logWarn("jsonString "..jsonString)
             
+        -- JSON 解析
         local jsonData = cjson.decode(jsonString)
             
         logWarn("Message is"..jsonData['Message']);

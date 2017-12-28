@@ -18,5 +18,8 @@
       <relation target="" sidePair="center-center,top-top%"/>
       <relation target="" sidePair="width-width%"/>
     </text>
+    <loader id="n7_7xal" name="imageView" xy="0,622" size="1080,200">
+      <relation target="" sidePair="top-top%,height-height"/>
+    </loader>
   </displayList>
 </component>

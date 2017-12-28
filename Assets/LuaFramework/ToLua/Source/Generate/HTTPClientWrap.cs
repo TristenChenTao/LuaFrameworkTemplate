@@ -8,6 +8,7 @@ public class HTTPClientWrap
 	{
 		L.BeginClass(typeof(HTTPClient), typeof(System.Object));
 		L.RegFunction("Request", Request);
+		L.RegFunction("LoadWebImage", LoadWebImage);
 		L.RegFunction("New", _CreateHTTPClient);
 		L.RegFunction("__tostring", ToLua.op_ToString);
 		L.EndClass();
@@ -64,6 +65,37 @@ public class HTTPClientWrap
 			else
 			{
 				return LuaDLL.luaL_throw(L, "invalid arguments to method: HTTPClient.Request");
+			}
+		}
+		catch (Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int LoadWebImage(IntPtr L)
+	{
+		try
+		{
+			int count = LuaDLL.lua_gettop(L);
+
+			if (count == 1)
+			{
+				string arg0 = ToLua.CheckString(L, 1);
+				HTTPClient.LoadWebImage(arg0);
+				return 0;
+			}
+			else if (count == 2)
+			{
+				string arg0 = ToLua.CheckString(L, 1);
+				LuaFunction arg1 = ToLua.CheckLuaFunction(L, 2);
+				HTTPClient.LoadWebImage(arg0, arg1);
+				return 0;
+			}
+			else
+			{
+				return LuaDLL.luaL_throw(L, "invalid arguments to method: HTTPClient.LoadWebImage");
 			}
 		}
 		catch (Exception e)

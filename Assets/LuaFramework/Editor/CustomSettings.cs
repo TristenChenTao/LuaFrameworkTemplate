@@ -224,6 +224,7 @@ public static class CustomSettings
         _GT(typeof(ThirdPlatformTool)),
         _GT(typeof(HTTPClient)),
         _GT(typeof(WWWForm)),
+        _GT(typeof(NTexture)),
     };
 
     public static List<Type> dynamicList = new List<Type>()

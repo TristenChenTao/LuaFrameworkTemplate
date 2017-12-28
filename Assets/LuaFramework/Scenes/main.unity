@@ -175,125 +175,125 @@ MonoBehaviour:
       RedirectUrl: http://www.esgame.com
       ShareByAppClient: 0
     tencentweibo:
-      Enable: 1
+      Enable: 0
       SortId: 3
       AppKey: 801307650
       AppSecret: ae36f4ee3946e1cbb98d6965b0b2ff5c
       RedirectUri: http://sharesdk.cn
     facebook:
-      Enable: 1
+      Enable: 0
       SortId: 8
       ConsumerKey: 1412473428822331
       ConsumerSecret: a42f4f3f867dc947b9ed6020c2e93558
       RedirectUrl: https://mob.com/
       ShareByAppClient: 0
     twitter:
-      Enable: 1
+      Enable: 0
       SortId: 9
       ConsumerKey: LRBM0H75rWrU9gNHvlEAA2aOy
       ConsumerSecret: gbeWsZvA9ELJSdoBzJ5oLKX0TU09UOwrzdGfo9Tg7DjyGuMe8G
       CallbackUrl: http://mob.com
     email:
-      Enable: 1
+      Enable: 0
       SortId: 12
     shortMessage:
-      Enable: 1
+      Enable: 0
       SortId: 13
     douban:
-      Enable: 1
+      Enable: 0
       SortId: 14
       ApiKey: 02e2cbe5ca06de5908a863b15e149b0b
       Secret: 9f1e7b4f71304f2f
       RedirectUri: http://www.esgame.com
     renren:
-      Enable: 1
+      Enable: 0
       SortId: 10
       AppId: 226427
       ApiKey: fc5b8aed373c4c27a05b712acba0f8c3
       SecretKey: f29df781abdd4f49beca5a2194676ca4
     googlePlus:
-      Enable: 1
+      Enable: 0
       SortId: 19
       ClientID: 682795613743-cfo3a8r4va0ujja7qofr54hobt2kv3cq.apps.googleusercontent.com
       RedirectUrl: http://localhost
       ShareByAppClient: 0
     kaiXin:
-      Enable: 1
+      Enable: 0
       SortId: 11
       AppKey: 358443394194887cee81ff5890870c7c
       AppSecret: da32179d859c016169f66d90b6db2a23
       RedirectUri: http://www.esgame.com
     pocket:
-      Enable: 1
+      Enable: 0
       SortId: 35
       ConsumerKey: 32741-389c565043c49947ba7edf05
     instagram:
-      Enable: 1
+      Enable: 0
       SortId: 26
       ClientId: ff68e3216b4f4f989121aa1c2962d058
       ClientSecret: 1b2e82f110264869b3505c3fe34e31a1
       RedirectUri: http://sharesdk.cn
     linkedIn:
-      Enable: 1
+      Enable: 0
       SortId: 18
       ApiKey: ejo5ibkye3vo
       SecretKey: cC7B2jpxITqPLZ5M
       RedirectUrl: http://sharesdk.cn
     tumblr:
-      Enable: 1
+      Enable: 0
       SortId: 23
       OAuthConsumerKey: 2QUXqO9fcgGdtGG1FcvML6ZunIQzAEL8xY6hIaxdJnDti2DYwM
       SecretKey: 3Rt0sPFj7u2g39mEVB3IBpOzKnM3JnTtxX2bao2JKk4VV1gtNo
       CallbackUrl: http://sharesdk.cn
     youDao:
-      Enable: 1
+      Enable: 0
       SortId: 15
       HostType: product
       ConsumerKey: dcde25dca105bcc36884ed4534dab940
       ConsumerSecret: d98217b4020e7f1874263795f44838fe
       RedirectUri: http://www.esgame.com/
     flickr:
-      Enable: 1
+      Enable: 0
       SortId: 22
       ApiKey: 33d833ee6b6fca49943363282dd313dd
       ApiSecret: 3a2c5b42a8fbb8bb
       RedirectUri: http://www.esgame.com
     evernote:
-      Enable: 1
+      Enable: 0
       SortId: 17
       ConsumerKey: sharesdk-7807
       ConsumerSecret: d05bf86993836004
       ShareByAppClient: 0
     whatsApp:
-      Enable: 1
+      Enable: 0
       SortId: 33
     line:
-      Enable: 1
+      Enable: 0
       SortId: 30
     dropbox:
-      Enable: 1
+      Enable: 0
       SortId: 24
       AppKey: 7janx53ilz11gbs
       AppSecret: c1hpx5fz6tzkm32
     vkontakte:
-      Enable: 1
+      Enable: 0
       SortId: 25
       ApplicationId: 3921561
     pinterest:
-      Enable: 1
+      Enable: 0
       SortId: 21
       ClientId: 1432928
     mingdao:
-      Enable: 1
+      Enable: 0
       SortId: 29
       AppKey: EEEE9578D1D431D3215D8C21BF5357E3
       AppSecret: 5EDE59F37B3EFA8F65EEFB9976A4E933
       RedirectUri: http://sharesdk.cn
     kakaoTalk:
-      Enable: 1
+      Enable: 0
       SortId: 31
     kakaoStory:
-      Enable: 1
+      Enable: 0
       SortId: 32
     qq:
       Enable: 1
@@ -327,48 +327,48 @@ MonoBehaviour:
       AppId: wxb952fb8a7cd1b910
       AppSecret: cfd6c0f31cc16788ac8c9d4f2cd8b2d5
     yixin:
-      Enable: 1
+      Enable: 0
       SortId: 27
       AppId: yx0d9a9f9088ea44d78680f3274da1765f
       BypassApproval: 1
     yixinMoments:
-      Enable: 1
+      Enable: 0
       SortId: 28
       AppId: yx0d9a9f9088ea44d78680f3274da1765f
       BypassApproval: 1
     facebookMessenger:
-      Enable: 1
+      Enable: 0
       SortId: 37
       AppId: 107704292745179
     instapaper:
-      Enable: 1
+      Enable: 0
       SortId: 36
       ConsumerKey: 4rDJORmcOcSAZL1YpqGHRI605xUvrLbOhkJ07yO0wWrYrc61FA
       ConsumerSecret: GNr1GespOQbrm8nvd7rlUsyRQsIo3boIbMguAl9gfpdL0aKZWe
     aliSocial:
-      Enable: 1
+      Enable: 0
       SortId: 50
       AppId: 2015072400185895
     aliSocialMoments:
-      Enable: 1
+      Enable: 0
       SortId: 51
       AppId: 2015072400185895
     dingTalk:
-      Enable: 1
+      Enable: 0
     youtube:
-      Enable: 1
+      Enable: 0
       SortId: 53
       ClientID: 370141748022-bicrnsjfiije93bvdt63dh3728m4shas.apps.googleusercontent.com
       RedirectUrl: http://localhost
       ShareByAppClient: true
     meiPai:
-      Enable: 1
+      Enable: 0
       SortId: 54
       ClientID: 1089867596
       RedirectUrl: http://localhost
       ShareByAppClient: true
     fourSquare:
-      Enable: 1
+      Enable: 0
       SortId: 20
       ClientID: G0ZI20FM30SJAJTX2RIBGD05QV1NE2KVIM2SPXML2XUJNXEU
       ClientSecret: 3XHQNSMMHIFBYOLWEPONNV4DOTCDBQH0AEMVGCBG0MZ32XNU

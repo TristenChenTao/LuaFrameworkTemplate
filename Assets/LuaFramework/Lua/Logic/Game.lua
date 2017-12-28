@@ -53,6 +53,10 @@ end
 function Game.ResponseHTTP(state,code,message, data)
     logWarn("Game.ResponseHTTP--->>")
 
+    if state == HTTPResponseState.Fail then
+        logWarn("请求失败")
+    end
+
     logWarn("state is "..state)
     logWarn("code is "..state)
     logWarn("message is "..message)

@@ -11,6 +11,12 @@ using BestHTTP.Cookies;
 using LitJson;
 
 public class HTTPClient {
+
+	enum HTTPResponseState : int {
+		Sucess = 1,
+		Fail = 0
+    };　
+
 	public static void Request (int methodType, string url, WWWForm parameter,  LuaFunction func = null) {
 		
 		HTTPMethods type = HTTPMethods.Get;
@@ -28,7 +34,6 @@ public class HTTPClient {
 		HTTPRequest httpRequest = new HTTPRequest(new Uri(url),
          type,
         (req, response) => {
-			int state = 0; // 0 失败 1 成功
 			int code = 0;
 			string message = "";
 			string dataString = "";
@@ -37,7 +42,7 @@ public class HTTPClient {
 
 				message = req.Exception.ToString();
 				if (func != null) {
-                    func.Call(0,code, message, dataString);
+                    func.Call((int)HTTPResponseState.Fail, code, message, dataString);
                 }
             }
             else {
@@ -61,14 +66,14 @@ public class HTTPClient {
 					Debug.Log("dataString " + dataString);
 
 					if (func != null) {
-                    	func.Call(0,code, message, dataString);
+                    	func.Call((int)HTTPResponseState.Sucess, code, message, dataString);
                 	}
                 }
                 catch (Exception ex) {
                     Debug.Log(ex);
 					message = ex.ToString();
 					if (func != null) {
-                    	func.Call(-1,code, message, dataString);
+                    	func.Call((int)HTTPResponseState.Fail, code, message, dataString);
                 	}
                 }
             }
@@ -88,5 +93,38 @@ public class HTTPClient {
        
         httpRequest.SetFields(parameter);
         httpRequest.Send();
+	}
+
+	public static void LoadWebImage (string url, LuaFunction func = null) {
+
+		string message = "";
+		Texture2D image = null;
+
+		if (string.IsNullOrEmpty(url)) {
+			func.Call((int)HTTPResponseState.Fail, "URL图片地址为空",image);
+			return;
+        }
+
+		HTTPRequest request = new HTTPRequest(new Uri(url), (req, response) => {
+			if (req.Exception != null) {
+				message = "请求图片地址 "+ url + req.Exception.ToString();
+				if (func != null) {
+                    func.Call((int)HTTPResponseState.Fail, message, image);
+                }
+            }
+			else {
+				if (response != null) {
+					image = response.DataAsTexture2D;
+					message = "请求图片地址 "+ url + "成功";
+					func.Call((int)HTTPResponseState.Sucess, message, image);
+            	}
+				else {
+					message = "请求图片地址 "+ url + "内容不存在";
+					func.Call((int)HTTPResponseState.Fail, "URL图片地址为空", image);
+				}
+			}
+
+        });
+        request.Send();
 	}
 }
