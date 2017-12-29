@@ -38,6 +38,11 @@ AuthorizePlatformType = {
 	Weibo = 3
 }
 
+AuthorizeResponseState = {
+	Sucess = 1,
+	Fail = 0,
+	Cancel = -1
+}
 
 -- HTTP
 

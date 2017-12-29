@@ -10,6 +10,12 @@ public class ThirdPlatformTool {
 
 	private static LuaFunction _AuthorLuaFunc;
 
+	enum AuthResponseState : int {
+		Sucess = 1,
+		Fail = 0,
+		Cancel = -1
+    };
+
 	public static void Authorize (int type,LuaFunction func = null) {
 		ConfigSSDK();
 
@@ -47,13 +53,13 @@ public class ThirdPlatformTool {
 				Debug.Log ("fail! error code = " + result["error_code"] + "; error msg = " + result["error_msg"]);
 			#endif
 
-			_AuthorLuaFunc.Call(0, "授权失败");
+			_AuthorLuaFunc.Call((int)AuthResponseState.Fail, "授权失败");
 		}
 		else if (state == ResponseState.Cancel) 
 		{
 			Debug.Log ("cancel !");
 
-			_AuthorLuaFunc.Call(-1, "授权取消","");
+			_AuthorLuaFunc.Call((int)AuthResponseState.Cancel, "授权取消");
 		}
 	}
 	
@@ -63,9 +69,11 @@ public class ThirdPlatformTool {
 			Debug.Log (MiniJSON.jsonEncode(result));
 			Debug.Log ("AuthInfo:" + MiniJSON.jsonEncode (_SSDK.GetAuthInfo (type)));
 			Debug.Log ("Get userInfo success !Platform :" + type );
+			
+			string userInfo = MiniJSON.jsonEncode(result);
+			string authInfo = MiniJSON.jsonEncode(_SSDK.GetAuthInfo (type));
 
-			string message = MiniJSON.jsonEncode(_SSDK.GetAuthInfo (type));
-			_AuthorLuaFunc.Call(1, "授权成功",message);
+			_AuthorLuaFunc.Call((int)AuthResponseState.Sucess, "授权成功",userInfo,authInfo);
 		}
 		else if (state == ResponseState.Fail) {
 			#if UNITY_ANDROID
@@ -74,12 +82,12 @@ public class ThirdPlatformTool {
 			Debug.Log ("fail! error code = " + result["error_code"] + "; error msg = " + result["error_msg"]);
 			#endif
 
-			_AuthorLuaFunc.Call(0, "获取用户信息失败","");
+			_AuthorLuaFunc.Call((int)AuthResponseState.Fail, "获取用户信息失败");
 		}
 		else if (state == ResponseState.Cancel) {
 			Debug.Log ("cancel !");
 
-			_AuthorLuaFunc.Call(-1, "取消获取用户信息","");
+			_AuthorLuaFunc.Call((int)AuthResponseState.Cancel, "取消获取用户信息");
 		}
 	}
 	

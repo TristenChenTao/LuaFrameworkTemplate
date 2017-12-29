@@ -43,7 +43,7 @@ function LoginCtrl:HandleUIEvent(value1)
     -- panel.contentPane:GetController("c1").selectedIndex = 1
 
     -- 三方登录
-    -- ThirdPlatformTool.Authorize(AuthorizePlatformType.WeChat, this.AuthorResponse)
+    ThirdPlatformTool.Authorize(AuthorizePlatformType.WeChat, this.AuthorResponse)
 
     
 end
@@ -55,10 +55,26 @@ function LoginCtrl:Close()
 end
 
 
-function LoginCtrl.AuthorResponse(state, message, jsonInfo)
+function LoginCtrl.AuthorResponse(state, message, userInfo, authInfo)
     logWarn("LoginCtrl.AuthorResponse--->>")
 
     logWarn("state is "..state)
-    logWarn("message is "..message)
-    logWarn("jsonInfo is "..jsonInfo)
+
+    if state == AuthorizeResponseState.Sucess then
+        logWarn("message is "..message)
+        logWarn("userInfo is "..userInfo)
+        logWarn("authInfo is "..authInfo)
+
+        local cjson = require "cjson"
+
+        local jsonData = cjson.decode(userInfo)
+            
+        logWarn("openid is"..jsonData['openid']);
+        
+    else
+    
+    end
+
+    
+
 end
