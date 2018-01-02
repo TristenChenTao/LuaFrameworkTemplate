@@ -43,9 +43,8 @@ function LoginCtrl:HandleUIEvent(value1)
     -- panel.contentPane:GetController("c1").selectedIndex = 1
 
     -- 三方登录
-    ThirdPlatformTool.Authorize(AuthorizePlatformType.WeChat, this.AuthorResponse)
+    ThirdPlatformTool.Authorize(AuthorizePlatformType.QQ, this.AuthorResponse)
 
-    
 end
 
 function LoginCtrl:Close()
@@ -55,10 +54,11 @@ function LoginCtrl:Close()
 end
 
 
-function LoginCtrl.AuthorResponse(state, message, userInfo, authInfo)
+function LoginCtrl.AuthorResponse(state, message, platformType, userInfo, authInfo)
     logWarn("LoginCtrl.AuthorResponse--->>")
 
     logWarn("state is "..state)
+    logWarn("platformType is "..platformType) -- AuthorizePlatformType.Wechat
 
     if state == AuthorizeResponseState.Sucess then
         logWarn("message is "..message)
