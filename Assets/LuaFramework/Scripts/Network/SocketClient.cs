@@ -61,7 +61,6 @@ public class SocketClient
     {
         client = null;
         PingTool.StartPing(host,(pingTime)=>{
-            Debug.Log("<><><><><><><><><><><><><><><   pingTime="+pingTime);
             NetworkManager.AddEvent(Protocal.PingTime, ""+pingTime);
         });
         Debug.Log("ConnectServer 连接服务器");
