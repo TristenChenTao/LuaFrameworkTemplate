@@ -8,12 +8,14 @@ using System.Collections.Generic;
 using LuaFramework;
 using System.Threading;
 
-public enum DisType {
+public enum DisType
+{
     Exception,
     Disconnect,
 }
 
-public class SocketClient {
+public class SocketClient
+{
     private TcpClient client = null;
     private NetworkStream outStream = null;
     private MemoryStream memStream;
@@ -24,15 +26,19 @@ public class SocketClient {
     public static bool loggedIn = false;
 
     private Thread _heartThread;
+    private Thread _receiveHeartThread;
 
+    private DateTime lastReceiveHeartMillisecond;
     // Use this for initialization
-    public SocketClient() {
+    public SocketClient()
+    {
     }
 
     /// <summary>
     /// 注册代理
     /// </summary>
-    public void OnRegister() {
+    public void OnRegister()
+    {
         memStream = new MemoryStream();
         reader = new BinaryReader(memStream);
     }
@@ -40,7 +46,9 @@ public class SocketClient {
     /// <summary>
     /// 移除代理
     /// </summary>
-    public void OnRemove() {
+    public void OnRemove()
+    {
+        Debug.Log("移除代理");
         this.Close();
         reader.Close();
         memStream.Close();
@@ -49,49 +57,79 @@ public class SocketClient {
     /// <summary>
     /// 连接服务器
     /// </summary>
-    void ConnectServer(string host, int port) {
+    void ConnectServer(string host, int port)
+    {
         client = null;
-        try {
+        PingTool.StartPing(host,(pingTime)=>{
+            Debug.Log("<><><><><><><><><><><><><><><   pingTime="+pingTime);
+            NetworkManager.AddEvent(Protocal.PingTime, ""+pingTime);
+        });
+        Debug.Log("ConnectServer 连接服务器");
+        try
+        {
             IPAddress[] address = Dns.GetHostAddresses(host);
-            if (address.Length == 0) {
+            if (address.Length == 0)
+            {
                 Debug.LogError("host invalid");
                 return;
             }
-            if (address[0].AddressFamily == AddressFamily.InterNetworkV6) {
+            if (address[0].AddressFamily == AddressFamily.InterNetworkV6)
+            {
                 client = new TcpClient(AddressFamily.InterNetworkV6);
             }
-            else {
+            else
+            {
                 client = new TcpClient(AddressFamily.InterNetwork);
             }
             client.SendTimeout = 1000;
             client.ReceiveTimeout = 1000;
             client.NoDelay = true;
             client.BeginConnect(host, port, new AsyncCallback(OnConnect), null);
-        } catch (Exception e) {
-            Close(); Debug.LogError(e.Message);
+        }
+        catch (Exception e)
+        {
+            CloseSocketConnect();
+            Debug.LogError(e.Message);
         }
     }
 
     /// <summary>
     /// 连接上服务器
     /// </summary>
-    void OnConnect(IAsyncResult asr) {
-        _heartThread = new Thread(SendHeart);
-        _heartThread.Start();
+    void OnConnect(IAsyncResult asr)
+    {
+        client.EndConnect(asr);
 
-        outStream = client.GetStream();
-        client.GetStream().BeginRead(byteBuffer, 0, MAX_READ, new AsyncCallback(OnRead), null);
-        // NetworkManager.AddEvent(Protocal.Connect, new ByteBuffer());
+        if (client.Connected)
+        {
+            CloseHeartThread();
+            CloseReceiveHeart();
+            _heartThread = new Thread(SendHeart);
+            _heartThread.Start();
+            _receiveHeartThread = new Thread(ReceiveHeart);
+            _receiveHeartThread.Start();
 
-        NetworkManager.AddEvent(Protocal.Connect, "");
+            outStream = client.GetStream();
+            client.GetStream().BeginRead(byteBuffer, 0, MAX_READ, new AsyncCallback(OnRead), null);
+            // NetworkManager.AddEvent(Protocal.Connect, new ByteBuffer());
+
+            NetworkManager.AddEvent(Protocal.Connect, "");
+        }
+        else
+        {
+            Debug.Log("<><><>> 发起连接失败 连接失败");
+            NetworkManager.AddEvent(Protocal.Disconnect, "发起连接失败 连接失败");
+        }
     }
 
     /// <summary>
     /// 写数据
     /// </summary>
-    void WriteMessage(byte[] message) {
+    void WriteMessage(byte[] message)
+    {
         MemoryStream ms = null;
-        using (ms = new MemoryStream()) {
+        using (ms = new MemoryStream())
+        {
             ms.Position = 0;
             BinaryWriter writer = new BinaryWriter(ms);
 
@@ -101,12 +139,15 @@ public class SocketClient {
             writer.Write(msglen);
             writer.Write(message);
             writer.Flush();
-            if (client != null && client.Connected) {
+            if (client != null && client.Connected)
+            {
                 //NetworkStream stream = client.GetStream();
                 byte[] payload = ms.ToArray();
                 outStream.BeginWrite(payload, 0, payload.Length, new AsyncCallback(OnWrite), null);
-            } else {
-                Debug.LogError("client.connected----->>false");
+            }
+            else
+            {
+                Debug.LogWarning("client.connected----->>false");
             }
         }
     }
@@ -114,23 +155,36 @@ public class SocketClient {
     /// <summary>
     /// 读取消息
     /// </summary>
-    void OnRead(IAsyncResult asr) {
+    void OnRead(IAsyncResult asr)
+    {
+        if (client.Connected == false)
+        {
+            Debug.LogWarning("client.connected----->>false");
+            return;
+        }
         int bytesRead = 0;
-        try {
-            lock (client.GetStream()) {         //读取字节流到缓冲区
+        try
+        {
+            lock (client.GetStream())
+            {         //读取字节流到缓冲区
                 bytesRead = client.GetStream().EndRead(asr);
             }
-            if (bytesRead < 1) {                //包尺寸有问题，断线处理
+            if (bytesRead < 1)
+            {                //包尺寸有问题，断线处理
                 OnDisconnected(DisType.Disconnect, "bytesRead < 1");
                 return;
             }
             OnReceive(byteBuffer, bytesRead);   //分析数据包内容，抛给逻辑层
-            lock (client.GetStream()) {         //分析完，再次监听服务器发过来的新消息
+            lock (client.GetStream())
+            {         //分析完，再次监听服务器发过来的新消息
                 Array.Clear(byteBuffer, 0, byteBuffer.Length);   //清空数组
                 client.GetStream().BeginRead(byteBuffer, 0, MAX_READ, new AsyncCallback(OnRead), null);
             }
-        } catch (Exception ex) {
+        }
+        catch (Exception ex)
+        {
             //PrintBytes();
+            Debug.Log(ex.Message);
             OnDisconnected(DisType.Exception, ex.Message);
         }
     }
@@ -138,8 +192,9 @@ public class SocketClient {
     /// <summary>
     /// 丢失链接
     /// </summary>
-    void OnDisconnected(DisType dis, string msg) {
-        Close();   //关掉客户端链接
+    void OnDisconnected(DisType dis, string msg)
+    {
+        CloseSocketConnect();   //关掉客户端链接
         int protocal = dis == DisType.Exception ?
         Protocal.Exception : Protocal.Disconnect;
 
@@ -147,16 +202,18 @@ public class SocketClient {
         // buffer.WriteShort((ushort)protocal);
         // NetworkManager.AddEvent(protocal, buffer);
         NetworkManager.AddEvent(protocal, "");
-        Debug.LogError("Connection was closed by the server:>" + msg + " Distype:>" + dis);
+        Debug.LogWarning("Connection was closed by the server:>" + msg + " Distype:>" + dis);
     }
 
     /// <summary>
     /// 打印字节
     /// </summary>
     /// <param name="bytes"></param>
-    void PrintBytes() {
+    void PrintBytes()
+    {
         string returnStr = string.Empty;
-        for (int i = 0; i < byteBuffer.Length; i++) {
+        for (int i = 0; i < byteBuffer.Length; i++)
+        {
             returnStr += byteBuffer[i].ToString("X2");
         }
         Debug.LogError(returnStr);
@@ -165,10 +222,15 @@ public class SocketClient {
     /// <summary>
     /// 向链接写入数据流
     /// </summary>
-    void OnWrite(IAsyncResult r) {
-        try {
+    void OnWrite(IAsyncResult r)
+    {
+
+        try
+        {
             outStream.EndWrite(r);
-        } catch (Exception ex) {
+        }
+        catch (Exception ex)
+        {
             Debug.LogError("OnWrite--->>>" + ex.Message);
         }
     }
@@ -176,24 +238,29 @@ public class SocketClient {
     /// <summary>
     /// 接收到消息
     /// </summary>
-    void OnReceive(byte[] bytes, int length) {
+    void OnReceive(byte[] bytes, int length)
+    {
         memStream.Seek(0, SeekOrigin.End);
         memStream.Write(bytes, 0, length);
         //Reset to beginning
         memStream.Seek(0, SeekOrigin.Begin);
-        while (RemainingBytes() > 2) {
+        while (RemainingBytes() > 2)
+        {
 
             //协议体修正(协议：[消息长度4字节][消息内容])
             // ushort messageLen = reader.ReadUInt16();
             int messageLen = reader.ReadInt32();
 
-            if (RemainingBytes() >= messageLen) {
+            if (RemainingBytes() >= messageLen)
+            {
                 MemoryStream ms = new MemoryStream();
                 BinaryWriter writer = new BinaryWriter(ms);
                 writer.Write(reader.ReadBytes(messageLen));
                 ms.Seek(0, SeekOrigin.Begin);
                 OnReceivedMessage(ms);
-            } else {
+            }
+            else
+            {
                 //Back up the position two bytes
 
                 //协议体修正(协议：[消息长度4字节][消息内容])
@@ -211,7 +278,8 @@ public class SocketClient {
     /// <summary>
     /// 剩余的字节
     /// </summary>
-    private long RemainingBytes() {
+    private long RemainingBytes()
+    {
         return memStream.Length - memStream.Position;
     }
 
@@ -219,7 +287,8 @@ public class SocketClient {
     /// 接收到消息
     /// </summary>
     /// <param name="ms"></param>
-    void OnReceivedMessage(MemoryStream ms) {
+    void OnReceivedMessage(MemoryStream ms)
+    {
         BinaryReader r = new BinaryReader(ms);
         byte[] message = r.ReadBytes((int)(ms.Length - ms.Position));
         //int msglen = message.Length;
@@ -227,7 +296,14 @@ public class SocketClient {
         ByteBuffer buffer = new ByteBuffer(message);
         var messageString = System.Text.Encoding.UTF8.GetString(message);
 
-        Debug.Log("服务端发送命令："+ messageString);
+        if (!messageString.Contains("s_heart"))
+        {
+            Debug.Log("服务端发送命令：" + messageString);
+        }
+        else
+        {
+            lastReceiveHeartMillisecond = DateTime.Now;
+        }
 
         //协议体修正(协议：[消息长度4字节][消息内容])
         //取消协议字段
@@ -241,21 +317,28 @@ public class SocketClient {
     /// <summary>
     /// 会话发送
     /// </summary>
-    void SessionSend(byte[] bytes) {
+    void SessionSend(byte[] bytes)
+    {
         WriteMessage(bytes);
+    }
+
+    /// <summary>
+    /// 关闭链接、心跳
+    /// </summary>
+    public void Close()
+    {
+        CloseHeartThread();
+        CloseSocketConnect();
+        CloseReceiveHeart();
     }
 
     /// <summary>
     /// 关闭链接
     /// </summary>
-    public void Close() {
-
-        if (_heartThread != null){
-            _heartThread.Abort();
-            _heartThread = null;
-        }
-        
-        if (client != null) {
+    void CloseSocketConnect()
+    {
+        if (client != null)
+        {
             if (client.Connected) client.Close();
             client = null;
         }
@@ -263,38 +346,106 @@ public class SocketClient {
     }
 
     /// <summary>
+    /// 关闭心跳
+    /// </summary>
+    void CloseHeartThread()
+    {
+        if (_heartThread != null)
+        {
+            _heartThread.Abort();
+            _heartThread = null;
+        }
+    }
+
+    /// <summary>
+    /// 关闭心跳检测
+    /// </summary>
+    void CloseReceiveHeart()
+    {
+        if (_receiveHeartThread != null)
+        {
+            _receiveHeartThread.Abort();
+            _receiveHeartThread = null;
+        }
+    }
+
+
+    /// <summary>
     /// 发送连接请求
     /// </summary>
-    public void SendConnect() {
+    public void SendConnect()
+    {
         ConnectServer(AppConst.SocketAddress, AppConst.SocketPort);
     }
 
     /// <summary>
     /// 发送消息
     /// </summary>
-    public void SendMessage(String str) {
+    public void SendMessage(String str)
+    {
         byte[] bytes = System.Text.Encoding.UTF8.GetBytes(str.ToCharArray());
         SessionSend(bytes);
         // buffer.Close();
     }
 
     /// <summary>
+    ///检测服务端心跳包
+    /// </summary>  
+    private void ReceiveHeart()
+    {
+        while (true)
+        {
+            try
+            {
+                Thread.Sleep(AppConst.heartInterval + 2);
+                if (lastReceiveHeartMillisecond != null && DateTime.Now.Subtract(lastReceiveHeartMillisecond).TotalSeconds > 7)
+                {
+                    Debug.Log("secondTimer_Elapsed   = " + DateTime.Now.Subtract(lastReceiveHeartMillisecond).TotalSeconds);
+                    string info = "didDisconnect 当前时间超过上一次收到心跳时间判断为断掉连接";
+                    Debug.Log(info);
+                    CloseHeartThread();
+                    CloseSocketConnect();
+                    NetworkManager.AddEvent(Protocal.Disconnect, "服务器断开连接");
+                }
+
+            }
+            catch (ThreadAbortException e)
+            {
+                Debug.Log("SendHeart Thread Abort Exception message =" + e);
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e);
+                Debug.Log("Couldn't catch the Thread Exception");
+            }
+        }
+    }
+
+    /// <summary>
     ///发送心跳包
     /// </summary>  
-    private void SendHeart() {
-        if(AppConst.heartInterval <= 0) {
+    private void SendHeart()
+    {
+        if (AppConst.heartInterval <= 0)
+        {
             Debug.LogError("心跳包时间间隔小雨等于0");
             return;
         }
-        while (true) {
-            try {
+        while (true)
+        {
+            try
+            {
+                Debug.Log("客户端发送心跳");
                 SendMessage("heart");
                 Thread.Sleep(AppConst.heartInterval);
             }
-            catch (ThreadAbortException e) {
-                Debug.LogError("SendHeart Thread Abort Exception message =" + e);
+            catch (ThreadAbortException e)
+            {
+                Debug.Log("SendHeart Thread Abort Exception message =" + e);
             }
-            finally {
+            catch (Exception e)
+            {
+                Debug.Log(e);
                 Debug.Log("Couldn't catch the Thread Exception");
             }
         }

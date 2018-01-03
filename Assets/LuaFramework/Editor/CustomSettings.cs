@@ -222,6 +222,7 @@ public static class CustomSettings
         //game extension
         _GT(typeof(ExUIPackage)),
         _GT(typeof(ThirdPlatformTool)),
+         _GT(typeof(PingTool)),
         _GT(typeof(HTTPClient)),
         _GT(typeof(WWWForm)),
         _GT(typeof(NTexture)),

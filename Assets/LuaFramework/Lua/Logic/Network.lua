@@ -18,6 +18,7 @@ function Network.Start()
     Event.AddListener(Protocal.Message, this.OnMessage); 
     Event.AddListener(Protocal.Exception, this.OnException); 
     Event.AddListener(Protocal.Disconnect, this.OnDisconnect); 
+    Event.AddListener(Protocal.PingTime, this.OnPing); 
 end
 
 --Socket消息--
@@ -30,6 +31,7 @@ end
 
 --当连接建立时--
 function Network.OnConnect()
+    islogging = true
     logWarn("Game Server connected!!")
 
 end
@@ -46,7 +48,6 @@ function Network.OnMessage(str)
         local jsonString = string.sub(str,actionIndex + 1,string.len(str))
         logWarn("jsonString "..jsonString)
             
-        -- JSON 解析
         local jsonData = cjson.decode(jsonString)
             
         logWarn("Message is"..jsonData['Message']);
@@ -59,16 +60,19 @@ end
 --异常断线--
 function Network.OnException()
     islogging = false;
-
-    NetManager:SendConnect();
-   	logError("OnException------->>>>");
+   	logWarn("OnException------->>>>");
 end
 
 --连接中断，或者被踢掉--
 function Network.OnDisconnect()
     islogging = false;
 
-    logError("OnDisconnect------->>>>");
+    logWarn("OnDisconnect------->>>>");
+end
+
+--ping--
+function Network.OnPing(str)
+   	logWarn("OnPing------->>>> ping ="..str);
 end
 
 
@@ -78,6 +82,7 @@ function Network.Unload()
     Event.RemoveListener(Protocal.Message);
     Event.RemoveListener(Protocal.Exception);
     Event.RemoveListener(Protocal.Disconnect);
+    Event.RemoveListener(Protocal.OnPing);
     logWarn('Unload Network...');
 end
 

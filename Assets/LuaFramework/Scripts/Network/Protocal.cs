@@ -7,5 +7,7 @@ namespace LuaFramework {
         public const int Disconnect = 103;     //断线 
 
         public const int Message = 104;     //消息（业务消息） 
+
+         public const int PingTime = 105;     //ping 的数值 
     }
 }

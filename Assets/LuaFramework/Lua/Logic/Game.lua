@@ -11,9 +11,9 @@ local this = Game;
 --初始化完成，发送链接服务器信息--
 function Game.OnInitOK()
 
-    -- AppConst.SocketAddress = "119.23.173.121";
-    -- AppConst.SocketPort = 4020;
-    -- networkMgr:SendConnect() -- Network.lua 里处理收发消息
+    AppConst.SocketAddress = "119.23.173.121";
+    AppConst.SocketPort = 4020;
+    networkMgr:SendConnect() -- Network.lua 里处理收发消息
 
     ---- Socket 发包
     --Network.Send("loginauto")

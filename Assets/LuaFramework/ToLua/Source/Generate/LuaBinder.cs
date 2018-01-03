@@ -13,6 +13,7 @@ public static class LuaBinder
 		TweenUtilsWrap.Register(L);
 		ExUIPackageWrap.Register(L);
 		ThirdPlatformToolWrap.Register(L);
+		PingToolWrap.Register(L);
 		HTTPClientWrap.Register(L);
 		ViewWrap.Register(L);
 		BaseWrap.Register(L);
