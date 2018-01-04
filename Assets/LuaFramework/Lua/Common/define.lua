@@ -29,16 +29,18 @@ networkMgr = LuaHelper.GetNetManager();
 WWW = UnityEngine.WWW;
 WWWForm = UnityEngine.WWWForm;
 GameObject = UnityEngine.GameObject;
-
+ShareContent = cn.sharesdk.unity3d.ShareContent;
+ContentType = cn.sharesdk.unity3d.ContentType;
 
 -- 第三方平台
-AuthorizePlatformType = {
+ThirdPlatformType = {
 	WeChat = 1,
 	QQ = 2,
-	Weibo = 3
+	Weibo = 3,
+	WeChatMoments = 4
 }
 
-AuthorizeResponseState = {
+ThirdResponseState = {
 	Sucess = 1,
 	Fail = 0,
 	Cancel = -1

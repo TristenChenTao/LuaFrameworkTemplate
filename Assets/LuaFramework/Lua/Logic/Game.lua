@@ -7,16 +7,14 @@ require "Common/functions"
 Game = {};
 local this = Game;
 
-
 --初始化完成，发送链接服务器信息--
 function Game.OnInitOK()
 
+    -- Socket 
     -- AppConst.SocketAddress = "119.23.173.121";
     -- AppConst.SocketPort = 4020;
     -- networkMgr:SendConnect() -- Network.lua 里处理收发消息
-
-    ---- Socket 发包
-    --Network.Send("loginauto")
+    --Network.Send("loginauto") -- Socket 发包
 
     CtrlManager.Init();
     local ctrl = CtrlManager.GetCtrl(CtrlNames.Login);
@@ -26,9 +24,11 @@ function Game.OnInitOK()
 
     logWarn('LuaFramework InitOK--->>>')
 
+    -- Update 监听 
     --UpdateBeat:Add(Update, self)
 
-    this.TestHTTP()
+    -- HTTP  
+    --this.TestHTTP()
 end
 
 function Update()

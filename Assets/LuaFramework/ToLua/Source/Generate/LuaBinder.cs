@@ -162,6 +162,14 @@ public static class LuaBinder
 		L.RegFunction("InitCallbackDelegate", FairyGUI_GObjectPool_InitCallbackDelegate);
 		L.EndModule();
 		L.EndModule();
+		L.BeginModule("cn");
+		L.BeginModule("sharesdk");
+		L.BeginModule("unity3d");
+		cn_sharesdk_unity3d_ShareContentWrap.Register(L);
+		cn_sharesdk_unity3d_ContentTypeWrap.Register(L);
+		L.EndModule();
+		L.EndModule();
+		L.EndModule();
 		L.BeginModule("System");
 		L.RegFunction("Action", System_Action);
 		L.RegFunction("Predicate_int", System_Predicate_int);

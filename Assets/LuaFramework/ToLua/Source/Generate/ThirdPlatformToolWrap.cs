@@ -8,9 +8,7 @@ public class ThirdPlatformToolWrap
 	{
 		L.BeginClass(typeof(ThirdPlatformTool), typeof(System.Object));
 		L.RegFunction("Authorize", Authorize);
-		L.RegFunction("OnAuthResultHandler", OnAuthResultHandler);
-		L.RegFunction("OnGetUserInfoResultHandler", OnGetUserInfoResultHandler);
-		L.RegFunction("OnShareResultHandler", OnShareResultHandler);
+		L.RegFunction("Share", Share);
 		L.RegFunction("New", _CreateThirdPlatformTool);
 		L.RegFunction("__tostring", ToLua.op_ToString);
 		L.RegVar("_SSDK", get__SSDK, set__SSDK);
@@ -73,55 +71,31 @@ public class ThirdPlatformToolWrap
 	}
 
 	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	static int OnAuthResultHandler(IntPtr L)
+	static int Share(IntPtr L)
 	{
 		try
 		{
-			ToLua.CheckArgsCount(L, 4);
-			int arg0 = (int)LuaDLL.luaL_checknumber(L, 1);
-			cn.sharesdk.unity3d.ResponseState arg1 = (cn.sharesdk.unity3d.ResponseState)ToLua.CheckObject(L, 2, typeof(cn.sharesdk.unity3d.ResponseState));
-			cn.sharesdk.unity3d.PlatformType arg2 = (cn.sharesdk.unity3d.PlatformType)ToLua.CheckObject(L, 3, typeof(cn.sharesdk.unity3d.PlatformType));
-			System.Collections.Hashtable arg3 = (System.Collections.Hashtable)ToLua.CheckObject<System.Collections.Hashtable>(L, 4);
-			ThirdPlatformTool.OnAuthResultHandler(arg0, arg1, arg2, arg3);
-			return 0;
-		}
-		catch (Exception e)
-		{
-			return LuaDLL.toluaL_exception(L, e);
-		}
-	}
+			int count = LuaDLL.lua_gettop(L);
 
-	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	static int OnGetUserInfoResultHandler(IntPtr L)
-	{
-		try
-		{
-			ToLua.CheckArgsCount(L, 4);
-			int arg0 = (int)LuaDLL.luaL_checknumber(L, 1);
-			cn.sharesdk.unity3d.ResponseState arg1 = (cn.sharesdk.unity3d.ResponseState)ToLua.CheckObject(L, 2, typeof(cn.sharesdk.unity3d.ResponseState));
-			cn.sharesdk.unity3d.PlatformType arg2 = (cn.sharesdk.unity3d.PlatformType)ToLua.CheckObject(L, 3, typeof(cn.sharesdk.unity3d.PlatformType));
-			System.Collections.Hashtable arg3 = (System.Collections.Hashtable)ToLua.CheckObject<System.Collections.Hashtable>(L, 4);
-			ThirdPlatformTool.OnGetUserInfoResultHandler(arg0, arg1, arg2, arg3);
-			return 0;
-		}
-		catch (Exception e)
-		{
-			return LuaDLL.toluaL_exception(L, e);
-		}
-	}
-
-	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	static int OnShareResultHandler(IntPtr L)
-	{
-		try
-		{
-			ToLua.CheckArgsCount(L, 4);
-			int arg0 = (int)LuaDLL.luaL_checknumber(L, 1);
-			cn.sharesdk.unity3d.ResponseState arg1 = (cn.sharesdk.unity3d.ResponseState)ToLua.CheckObject(L, 2, typeof(cn.sharesdk.unity3d.ResponseState));
-			cn.sharesdk.unity3d.PlatformType arg2 = (cn.sharesdk.unity3d.PlatformType)ToLua.CheckObject(L, 3, typeof(cn.sharesdk.unity3d.PlatformType));
-			System.Collections.Hashtable arg3 = (System.Collections.Hashtable)ToLua.CheckObject<System.Collections.Hashtable>(L, 4);
-			ThirdPlatformTool.OnShareResultHandler(arg0, arg1, arg2, arg3);
-			return 0;
+			if (count == 2)
+			{
+				int arg0 = (int)LuaDLL.luaL_checknumber(L, 1);
+				cn.sharesdk.unity3d.ShareContent arg1 = (cn.sharesdk.unity3d.ShareContent)ToLua.CheckObject<cn.sharesdk.unity3d.ShareContent>(L, 2);
+				ThirdPlatformTool.Share(arg0, arg1);
+				return 0;
+			}
+			else if (count == 3)
+			{
+				int arg0 = (int)LuaDLL.luaL_checknumber(L, 1);
+				cn.sharesdk.unity3d.ShareContent arg1 = (cn.sharesdk.unity3d.ShareContent)ToLua.CheckObject<cn.sharesdk.unity3d.ShareContent>(L, 2);
+				LuaFunction arg2 = ToLua.CheckLuaFunction(L, 3);
+				ThirdPlatformTool.Share(arg0, arg1, arg2);
+				return 0;
+			}
+			else
+			{
+				return LuaDLL.luaL_throw(L, "invalid arguments to method: ThirdPlatformTool.Share");
+			}
 		}
 		catch (Exception e)
 		{

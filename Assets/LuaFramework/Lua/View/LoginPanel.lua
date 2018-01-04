@@ -32,10 +32,10 @@ function LoginPanel:BindEvent()
     end)
 
     -- 下载图片
-    local imageURL = "http://wzshipin.com/d/file/201712/c8f73442b81f8024ae440d5c265af4e5.jpg";
-    HTTPClient.LoadWebImage(imageURL,function(state, message, image)
-        logWarn("LoadWebImage state is "..state)
-        logWarn("LoadWebImage message is "..message)
-        self.imageView.texture = NTexture(image)
-    end)
+    -- local imageURL = "http://wzshipin.com/d/file/201712/c8f73442b81f8024ae440d5c265af4e5.jpg";
+    -- HTTPClient.LoadWebImage(imageURL,function(state, message, image)
+    --     logWarn("LoadWebImage state is "..state)
+    --     logWarn("LoadWebImage message is "..message)
+    --     self.imageView.texture = NTexture(image)
+    -- end)
 end
