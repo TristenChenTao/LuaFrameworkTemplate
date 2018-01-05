@@ -10,17 +10,19 @@ public class ThirdPlatformTool {
 
 	private static LuaFunction _AuthorLuaFunc;
 
-	enum AuthResponseState : int {
+	private static LuaFunction _ShareLuaFunc;
+
+	enum ThirdResponseState : int {
 		Sucess = 1,
 		Fail = 0,
 		Cancel = -1
     };
 
-
 	enum ThirdPlatformType : int {
 		WeChat = 1,
 		QQ = 2,
-		Weibo = 3
+		Weibo = 3,
+		WeChatMoments = 4
     };
 
 	public static void Authorize (int type,LuaFunction func = null) {
@@ -29,8 +31,18 @@ public class ThirdPlatformTool {
 		PlatformType finaltype = ThirdPlatformTool.fromInt(type);
 		_SSDK.Authorize(finaltype);
 		_AuthorLuaFunc = func;
+	}
+	public static void Share (int type, ShareContent content, LuaFunction func = null) {
+		Debug.Log ("Start Share ");
+		ConfigSSDK();
+
+		PlatformType finaltype = ThirdPlatformTool.fromInt(type);
+		 _SSDK.ShareContent(finaltype, content);
+		_SSDK.ShareContent (PlatformType.WeChat, content);
+			
+		_ShareLuaFunc = func;
 	}	
-	public static void OnAuthResultHandler(int reqID, ResponseState state, PlatformType type, Hashtable result)
+	private static void OnAuthResultHandler(int reqID, ResponseState state, PlatformType type, Hashtable result)
 	{
 		int platformType = ThirdPlatformTool.fromPlatformType(type);
 
@@ -52,17 +64,20 @@ public class ThirdPlatformTool {
 				Debug.Log ("fail! error code = " + result["error_code"] + "; error msg = " + result["error_msg"]);
 			#endif
 
-			_AuthorLuaFunc.Call((int)AuthResponseState.Fail, "授权失败", platformType);
+			if (_AuthorLuaFunc != null) {
+				_AuthorLuaFunc.Call((int)ThirdResponseState.Fail, "授权失败", platformType);
+			}
 		}
 		else if (state == ResponseState.Cancel) 
 		{
 			Debug.Log ("cancel !");
-
-			_AuthorLuaFunc.Call((int)AuthResponseState.Cancel, "授权取消", platformType);
+			if (_AuthorLuaFunc != null) {
+				_AuthorLuaFunc.Call((int)ThirdResponseState.Cancel, "授权取消", platformType);
+			}
 		}
 	}
 	
-	public static void OnGetUserInfoResultHandler (int reqID, ResponseState state, PlatformType type, Hashtable result) {
+	private static void OnGetUserInfoResultHandler (int reqID, ResponseState state, PlatformType type, Hashtable result) {
 
 		int platformType = ThirdPlatformTool.fromPlatformType(type);
 
@@ -75,7 +90,9 @@ public class ThirdPlatformTool {
 			string userInfo = MiniJSON.jsonEncode(result);
 			string authInfo = MiniJSON.jsonEncode(_SSDK.GetAuthInfo (type));
 
-			_AuthorLuaFunc.Call((int)AuthResponseState.Sucess, "授权成功", platformType, userInfo,authInfo);
+			if (_AuthorLuaFunc != null) {
+				_AuthorLuaFunc.Call((int)ThirdResponseState.Sucess, "授权成功", platformType, userInfo,authInfo);
+			}
 		}
 		else if (state == ResponseState.Fail) {
 			#if UNITY_ANDROID
@@ -84,36 +101,60 @@ public class ThirdPlatformTool {
 			Debug.Log ("fail! error code = " + result["error_code"] + "; error msg = " + result["error_msg"]);
 			#endif
 
-			_AuthorLuaFunc.Call((int)AuthResponseState.Fail, "获取用户信息失败", platformType);
+			if (_AuthorLuaFunc != null) {
+				_AuthorLuaFunc.Call((int)ThirdResponseState.Fail, "获取用户信息失败", platformType);
+			}
 		}
 		else if (state == ResponseState.Cancel) {
 			Debug.Log ("cancel !");
 
-			_AuthorLuaFunc.Call((int)AuthResponseState.Cancel, "取消获取用户信息", platformType);
+			if (_AuthorLuaFunc != null) {
+				_AuthorLuaFunc.Call((int)ThirdResponseState.Cancel, "取消获取用户信息", platformType);
+			}
 		}
 	}
 	
-	public static void OnShareResultHandler (int reqID, ResponseState state, PlatformType type, Hashtable result)
-	{
-		if (state == ResponseState.Success)
-		{
+	private static void OnShareResultHandler (int reqID, ResponseState state, PlatformType type, Hashtable result) {
+
+		int platformType = ThirdPlatformTool.fromPlatformType(type);
+
+		if (state == ResponseState.Success) {
 			Debug.Log ("share successfully - share result :");
 			Debug.Log (MiniJSON.jsonEncode(result));
+
+			if (_ShareLuaFunc != null) {
+				_ShareLuaFunc.Call((int)ThirdResponseState.Sucess, "分享成功", platformType);
+			}
+
 		}
-		else if (state == ResponseState.Fail)
-		{
+		else if (state == ResponseState.Fail) {
 			#if UNITY_ANDROID
 			Debug.Log ("fail! throwable stack = " + result["stack"] + "; error msg = " + result["msg"]);
+			_ShareLuaFunc.Call((int)ThirdResponseState.Fail, result["msg"], platformType);
+
 			#elif UNITY_IPHONE
 			Debug.Log ("fail! error code = " + result["error_code"] + "; error msg = " + result["error_msg"]);
+			_ShareLuaFunc.Call((int)ThirdResponseState.Fail, result["error_msg"], platformType);
 			#endif
 		}
-		else if (state == ResponseState.Cancel) 
-		{
+		else if (state == ResponseState.Cancel) {
 			Debug.Log ("cancel !");
+
+			if (_ShareLuaFunc != null) {
+				_ShareLuaFunc.Call((int)ThirdResponseState.Cancel, "分享取消", platformType);
+			}
 		}
 	}
 
+	private static void ConfigSSDK() {
+		if(_SSDK == null) {
+			GameObject shareSDKObject = GameObject.FindWithTag("ShareSDK");
+        	_SSDK = shareSDKObject.GetComponent<ShareSDK>();
+			_SSDK.authHandler = OnAuthResultHandler;
+			_SSDK.shareHandler = OnShareResultHandler;
+			_SSDK.showUserHandler = OnGetUserInfoResultHandler;
+		}
+	}
 
 	private static PlatformType fromInt(int type) {
 		
@@ -129,6 +170,9 @@ public class ThirdPlatformTool {
 		}
 		else if (thirdPlatformType == ThirdPlatformType.Weibo) {
 			finaltype = PlatformType.SinaWeibo;
+		}
+		else if (thirdPlatformType == ThirdPlatformType.WeChatMoments) {
+			finaltype = PlatformType.WeChatMoments;
 		}
 
 		return finaltype;
@@ -147,17 +191,11 @@ public class ThirdPlatformTool {
 		else if (type == PlatformType.SinaWeibo) {
 			finaltype = (int)ThirdPlatformType.Weibo;
 		}
+		else if (type == PlatformType.WeChatMoments) {
+			finaltype = (int)ThirdPlatformType.WeChatMoments;
+		}
 
 		return finaltype;
 	}
 
-	private static void ConfigSSDK() {
-		if(_SSDK == null) {
-			GameObject shareSDKObject = GameObject.FindWithTag("ShareSDK");
-        	_SSDK = shareSDKObject.GetComponent<ShareSDK>();
-			_SSDK.authHandler = OnAuthResultHandler;
-			_SSDK.shareHandler = OnShareResultHandler;
-			_SSDK.showUserHandler = OnGetUserInfoResultHandler;
-		}
-	}
 }

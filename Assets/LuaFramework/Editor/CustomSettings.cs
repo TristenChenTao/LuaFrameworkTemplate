@@ -9,6 +9,7 @@ using UnityEngine.UI;
 using System.Reflection;
 
 using FairyGUI;
+using cn.sharesdk.unity3d;
 
 public static class CustomSettings
 {
@@ -225,6 +226,8 @@ public static class CustomSettings
         _GT(typeof(HTTPClient)),
         _GT(typeof(WWWForm)),
         _GT(typeof(NTexture)),
+        _GT(typeof(ShareContent)),
+        _GT(typeof(ContentType)),
     };
 
     public static List<Type> dynamicList = new List<Type>()
