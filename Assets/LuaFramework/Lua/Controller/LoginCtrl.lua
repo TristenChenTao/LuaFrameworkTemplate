@@ -55,7 +55,7 @@ function LoginCtrl:HandleUIEvent(value1)
     content:SetText("this is a test string.");
     content:SetImageUrl("http://ww3.sinaimg.cn/mw690/be159dedgw1evgxdt9h3fj218g0xctod.jpg");
     content:SetTitle("test title");
-    content:SetUrl("http://qjsj.youzu.com/jycs/");
+    content:SetUrl("https://www.jianshu.com/");
     content:SetShareType(ContentType.Webpage);
 
     ThirdPlatformTool.Share(ThirdPlatformType.WeChat, content, this.ShareResponse)
