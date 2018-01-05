@@ -9,6 +9,9 @@
 /Assets/StreamingAssets*
 /luaframework/
 /.vscode/
+/Assets/LuaFramework/ToLua/Source/Generate/*
+/Assets/LuaFramework/ToLua/Source/Generate/!DelegateFactory.cs
+/Assets/LuaFramework/ToLua/Source/Generate/!LuaBinder.cs
 
 # Visual Studio 2015 cache directory
 /.vs/
