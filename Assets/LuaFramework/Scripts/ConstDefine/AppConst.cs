@@ -27,6 +27,7 @@ namespace LuaFramework {
         public const string AppName = "LuaFramework";               //应用程序名称
         public const string LuaTempDir = "Lua/";                    //临时目录
 
+        public const string AudioDir = "MUSIC/";                        //音频资源路径
         public const string UIDir = "UI/";                          //FairyUI 资源路径
         public const string AppPrefix = AppName + "_";              //应用程序前缀
         public const string ExtName = ".unity3d";                   //素材扩展名

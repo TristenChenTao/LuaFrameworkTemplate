@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Timers;
 
 namespace LuaFramework {
     public class SoundManager : Manager {
@@ -12,7 +13,7 @@ namespace LuaFramework {
         }
 
         /// <summary>
-        /// Ìí¼ÓÒ»¸öÉùÒô
+        /// ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         /// </summary>
         void Add(string key, AudioClip value) {
             if (sounds[key] != null || value == null) return;
@@ -20,7 +21,7 @@ namespace LuaFramework {
         }
 
         /// <summary>
-        /// »ñÈ¡Ò»¸öÉùÒô
+        /// ï¿½ï¿½È¡Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         /// </summary>
         AudioClip Get(string key) {
             if (sounds[key] == null) return null;
@@ -28,19 +29,43 @@ namespace LuaFramework {
         }
 
         /// <summary>
-        /// ÔØÈëÒ»¸öÒôÆµ
+        /// ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Æµ
         /// </summary>
         public AudioClip LoadAudioClip(string path) {
-            AudioClip ac = Get(path);
+
+            string url = AppConst.AudioDir + path;
+         
+            AudioClip ac = Get(url);
+            if(AppConst.LuaBundleMode) {
+                url = Util.DataPath + AppConst.AudioDir.ToLower() + path.ToLower() + AppConst.ExtName; 
+                ac = Get(url);
+                if (ac == null) {
+                    AssetBundle ab = AssetBundle.LoadFromFile(url);        
+                    if (ab) {
+                        string[] names =  path.Split('/');
+                        ac = ab.LoadAsset(names[names.Length - 1]) as AudioClip;
+                        // System.Timers.Timer t = new System.Timers.Timer(2); 
+                        ab.Unload(false);
+                        Add(url, ac);
+                    }
+                    else {
+                        Debug.LogError("abåŒ…ï¼š" + path + "ä¸å­˜åœ¨ï¼Œè¯·æ£€æŸ¥ï¼");
+                    }
+                }
+               
+                return ac;
+            }
+        
+            ac = Get(url);
             if (ac == null) {
-                ac = (AudioClip)Resources.Load(path, typeof(AudioClip));
-                Add(path, ac);
+                ac = (AudioClip)Resources.Load(url,typeof(AudioClip));
+                Add(url, ac);
             }
             return ac;
         }
 
         /// <summary>
-        /// ÊÇ·ñ²¥·Å±³¾°ÒôÀÖ£¬Ä¬ÈÏÊÇ1£º²¥·Å
+        /// ï¿½Ç·ñ²¥·Å±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö£ï¿½Ä¬ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         /// </summary>
         /// <returns></returns>
         public bool CanPlayBackSound() {
@@ -50,12 +75,13 @@ namespace LuaFramework {
         }
 
         /// <summary>
-        /// ²¥·Å±³¾°ÒôÀÖ
+        /// ï¿½ï¿½ï¿½Å±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         /// </summary>
         /// <param name="canPlay"></param>
         public void PlayBacksound(string name, bool canPlay) {
+            string url = AppConst.AudioDir + name;
             if (audio.clip != null) {
-                if (name.IndexOf(audio.clip.name) > -1) {
+                if (url.IndexOf(audio.clip.name) > -1) {
                     if (!canPlay) {
                         audio.Stop();
                         audio.clip = null;
@@ -76,7 +102,7 @@ namespace LuaFramework {
         }
 
         /// <summary>
-        /// ÊÇ·ñ²¥·ÅÒôĞ§,Ä¬ÈÏÊÇ1£º²¥·Å
+        /// ï¿½Ç·ñ²¥·ï¿½ï¿½ï¿½Ğ§,Ä¬ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         /// </summary>
         /// <returns></returns>
         public bool CanPlaySoundEffect() {
@@ -86,7 +112,7 @@ namespace LuaFramework {
         }
 
         /// <summary>
-        /// ²¥·ÅÒôÆµ¼ô¼­
+        /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½ï¿½
         /// </summary>
         /// <param name="clip"></param>
         /// <param name="position"></param>

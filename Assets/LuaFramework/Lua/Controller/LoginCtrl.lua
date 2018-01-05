@@ -51,14 +51,18 @@ function LoginCtrl:HandleUIEvent(value1)
     -- ThirdPlatformTool.Authorize(ThirdPlatformType.QQ, this.AuthorResponse)
 
     -- 三方分享
-    local content = ShareContent();
-    content:SetText("this is a test string.");
-    content:SetImageUrl("http://ww3.sinaimg.cn/mw690/be159dedgw1evgxdt9h3fj218g0xctod.jpg");
-    content:SetTitle("test title");
-    content:SetUrl("https://www.jianshu.com/");
-    content:SetShareType(ContentType.Webpage);
+    -- local content = ShareContent();
+    -- content:SetText("this is a test string.");
+    -- content:SetImageUrl("http://ww3.sinaimg.cn/mw690/be159dedgw1evgxdt9h3fj218g0xctod.jpg");
+    -- content:SetTitle("test title");
+    -- content:SetUrl("https://www.jianshu.com/");
+    -- content:SetShareType(ContentType.Webpage);
 
-    ThirdPlatformTool.Share(ThirdPlatformType.WeChat, content, this.ShareResponse)
+    -- ThirdPlatformTool.Share(ThirdPlatformType.WeChat, content, this.ShareResponse)
+    --音乐播放
+    soundMgr:LoadAudioClip("AllUse_Music/五秒倒计时")
+    
+    soundMgr:PlayBacksound("AllUse_Music/五秒倒计时",true) 
 end
 
 function LoginCtrl.AuthorResponse(state, message, platformType, userInfo, authInfo)

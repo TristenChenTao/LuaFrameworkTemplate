@@ -73,6 +73,7 @@ public class Packager {
             HandleLuaFile();
         }
         HandleUIBundle();
+        HandleAudioBundle();
 
         string resPath = "Assets/" + AppConst.AssetDir;
         BuildAssetBundleOptions options = BuildAssetBundleOptions.DeterministicAssetBundle | 
@@ -226,6 +227,51 @@ public class Packager {
         AssetDatabase.Refresh();
     }
 
+     /// <summary>
+    /// 处理音频素材包
+    /// </summary>
+    static void HandleAudioBundle() {
+        string path = Application.streamingAssetsPath + "/" + AppConst.AudioDir.ToLower();
+        if (!Directory.Exists(path))
+            Directory.CreateDirectory(path);
+
+        string assetsPath = Application.streamingAssetsPath;
+        string audioPath = Application.dataPath + "/Resources/" + AppConst.AudioDir.ToLower();
+        paths.Clear();
+        files.Clear();
+        Recursive(audioPath);
+        foreach (string f in files)
+        {
+   
+            string bundleName = "";
+            if (f.EndsWith(".mp3"))
+            {
+                bundleName = f.Replace(".mp3", "").Replace(audioPath,"");
+            }
+            else if (f.EndsWith(".aiff"))
+            {
+                bundleName = f.Replace(".aiff", "").Replace(audioPath,"");
+            }
+            else if (f.EndsWith(".ogg"))
+            {
+                bundleName = f.Replace(".ogg", "").Replace(audioPath,"");
+            }
+            else if (f.EndsWith(".wav"))
+            {
+                bundleName = f.Replace(".mp3", "").Replace(audioPath,"");
+            }
+
+            if(!string.IsNullOrEmpty(bundleName)) {
+                List<string> bundleFiles = GetAudioBundlePaths(bundleName, f);
+                AssetBundleBuild build = new AssetBundleBuild();
+                build.assetBundleName = AppConst.AudioDir.ToLower() + bundleName.ToLower() + AppConst.ExtName; 
+                build.assetNames = bundleFiles.ToArray();
+                maps.Add(build);
+            }
+        }
+        AssetDatabase.Refresh();
+    }   
+
     static List<string>GetUIBundlePaths(string bundleName,string baseFilePath)
     {
         List<string> bundlePaths = new List<string>();
@@ -246,6 +292,42 @@ public class Packager {
         }
         return bundlePaths;
     }
+
+    static List<string>GetAudioBundlePaths(string bundleName,string baseFilePath)
+    {
+        List<string> bundlePaths = new List<string>();
+        foreach (string f in files)
+        {
+            if (!f.Contains(".mate"))
+            {
+                if (f.EndsWith(bundleName + ".mp3"))
+                {
+                    UnityEngine.Debug.Log(bundleName);
+                    bundlePaths.Add("Assets" + f.Replace(Application.dataPath, ""));
+                }
+
+                if (f.EndsWith(bundleName + ".wav"))
+                {
+                    UnityEngine.Debug.Log(bundleName);
+                    bundlePaths.Add("Assets" + f.Replace(Application.dataPath, ""));
+                }
+
+                if (f.EndsWith(bundleName + ".ogg"))
+                {
+                    UnityEngine.Debug.Log(bundleName);
+                    bundlePaths.Add("Assets" + f.Replace(Application.dataPath, ""));
+                }
+
+                if (f.EndsWith(bundleName + ".aiff"))
+                {
+                    UnityEngine.Debug.Log(bundleName);
+                    bundlePaths.Add("Assets" + f.Replace(Application.dataPath, ""));
+                }
+            }
+        }
+        return bundlePaths;
+    }
+
 
     static void BuildFileIndex() {
         string resPath = AppDataPath + "/StreamingAssets/";
