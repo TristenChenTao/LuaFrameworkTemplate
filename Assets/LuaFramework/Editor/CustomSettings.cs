@@ -220,6 +220,10 @@ public static class CustomSettings
 
         _GT(typeof(TweenUtils)),
 
+        //luaide
+        _GT(typeof(LuaDebugTool)),
+        _GT(typeof(LuaValueInfo)),
+
         //game extension
         _GT(typeof(ExUIPackage)),
         _GT(typeof(ThirdPlatformTool)),

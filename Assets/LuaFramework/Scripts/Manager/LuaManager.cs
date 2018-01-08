@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using LuaInterface;
+using System;
 
 namespace LuaFramework {
     public class LuaManager : Manager {
@@ -42,7 +43,22 @@ namespace LuaFramework {
             lua.OpenLibs(LuaDLL.luaopen_cjson_safe);
             lua.LuaSetField(-2, "cjson.safe");
         }
-
+        #region luaide 调试库添加
+        //如果项目中没有luasocket 请打开
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int LuaOpen_Socket_Core(IntPtr L)
+        {
+            return LuaDLL.luaopen_socket_core(L);
+        }
+       
+        protected void OpenLuaSocket()
+        {
+            LuaConst.openLuaSocket = true;
+            lua.BeginPreLoad();
+            lua.RegFunction("socket.core", LuaOpen_Socket_Core);
+            lua.EndPreLoad();
+        }
+        #endregion
         void StartMain() {
             lua.DoFile("Main.lua");
 
@@ -61,7 +77,10 @@ namespace LuaFramework {
             lua.OpenLibs(LuaDLL.luaopen_protobuf_c);
             lua.OpenLibs(LuaDLL.luaopen_lpeg);
             lua.OpenLibs(LuaDLL.luaopen_bit);
+            
+            //luaide socket open
             lua.OpenLibs(LuaDLL.luaopen_socket_core);
+            this.OpenLuaSocket();
 
             this.OpenCJson();
         }

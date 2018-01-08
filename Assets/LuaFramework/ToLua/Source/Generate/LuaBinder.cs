@@ -11,6 +11,8 @@ public static class LuaBinder
 		L.BeginModule(null);
 		LuaInterface_DebuggerWrap.Register(L);
 		TweenUtilsWrap.Register(L);
+		LuaDebugToolWrap.Register(L);
+		LuaValueInfoWrap.Register(L);
 		ExUIPackageWrap.Register(L);
 		ThirdPlatformToolWrap.Register(L);
 		HTTPClientWrap.Register(L);
