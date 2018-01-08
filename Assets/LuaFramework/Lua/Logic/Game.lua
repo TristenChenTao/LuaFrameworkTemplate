@@ -12,13 +12,13 @@ function Game.OnInitOK()
 
 
     -- Socket 
-    -- AppConst.SocketAddress = "119.23.173.121";
-    -- AppConst.SocketPort = 4020;
-    -- networkMgr:SendConnect() -- Network.lua 里处理收发消息
-    --Network.Send("loginauto") -- Socket 发包
+    AppConst.SocketAddress = "119.23.173.121";
+    AppConst.SocketPort = 4020;
+    networkMgr:SendConnect() -- Network.lua 里处理收发消息
+    Network.Send("loginauto") -- Socket 发包
 
     CtrlManager.Init();
-    local ctrl = CtrlManager.GetCtrl(CtrlNames.Login);
+    local ctrl = CtrlManager.GetCtrl(ControllerNames.Login);
     if ctrl ~= nil then
        ctrl:Awake();
     end
@@ -26,10 +26,14 @@ function Game.OnInitOK()
     logWarn('LuaFramework InitOK--->>>')
 
     -- Update 监听 
-    --UpdateBeat:Add(Update, self)
+    UpdateBeat:Add(Update, self)
 
     -- HTTP  
-    --this.TestHTTP()
+    this.TestHTTP()
+
+    --音乐播放
+    soundMgr:LoadAudioClip("AllUse_Music/audioStuff")
+    soundMgr:PlayBacksound("AllUse_Music/audioStuff",true) 
 end
 
 function Update()

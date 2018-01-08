@@ -38,7 +38,7 @@ function LoginCtrl:HandleUIEvent(value1)
     logWarn("value1 is 111111111111"..value1)
 
     -- 场景切换
-    -- local ctrl = CtrlManager.GetCtrl(CtrlNames.Main)
+    -- local ctrl = CtrlManager.GetCtrl(ControllerNames.Main)
     -- if ctrl ~= nil then
     --    ctrl:Awake()
     --    this:Close()
@@ -48,7 +48,7 @@ function LoginCtrl:HandleUIEvent(value1)
     -- panel.contentPane:GetController("c1").selectedIndex = 1
 
     -- 三方登录
-    -- ThirdPlatformTool.Authorize(ThirdPlatformType.QQ, this.AuthorResponse)
+    ThirdPlatformTool.Authorize(ThirdPlatformType.WeChat, this.AuthorResponse)
 
     -- 三方分享
     -- local content = ShareContent();
@@ -59,10 +59,7 @@ function LoginCtrl:HandleUIEvent(value1)
     -- content:SetShareType(ContentType.Webpage);
 
     -- ThirdPlatformTool.Share(ThirdPlatformType.WeChat, content, this.ShareResponse)
-    --音乐播放
-    soundMgr:LoadAudioClip("AllUse_Music/五秒倒计时")
-    
-    soundMgr:PlayBacksound("AllUse_Music/五秒倒计时",true) 
+
 end
 
 function LoginCtrl.AuthorResponse(state, message, platformType, userInfo, authInfo)

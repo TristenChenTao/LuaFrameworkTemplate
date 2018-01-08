@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cn.sharesdk.demo"
+    package="com.esgame.wolfkiller.match"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -16,7 +16,7 @@
     <!-- 蓝牙分享所需的权限 -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    
+
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
@@ -28,7 +28,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="stateHidden|adjustResize" >
-       
+
 		 	<!-- 新浪回调 -->
             <intent-filter>
 				<action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />
@@ -40,7 +40,7 @@
                <category android:name="android.intent.category.DEFAULT" />
                <category android:name="android.intent.category.BROWSABLE" />
   						 <data android:scheme="line.1477692153" />
-            </intent-filter>	
+            </intent-filter>
         </activity>
 
         <!--
@@ -62,7 +62,7 @@
 
         <!-- 微信分享回调 -->
         <activity
-            android:name=".wxapi.WXEntryActivity"
+            android:name="com.esgame.wolfkiller.match.wxapi.WXEntryActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true" />
@@ -73,7 +73,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:excludeFromRecents="true"
             android:exported="true"
-            android:launchMode="singleTop" />			
+            android:launchMode="singleTop" />
         <!-- 支付宝分享回调 -->
         <activity
             android:name=".apshare.ShareEntryActivity"
@@ -82,7 +82,7 @@
             android:exported="true"/>
 
         <meta-data android:name="Mob-AppKey" android:value="moba6b6c6d6"/>
-        <meta-data android:name="Mob-AppSecret" android:value="b89d2427a3bc7ad1aea1e1e8c1d36bf3"/>				
+        <meta-data android:name="Mob-AppSecret" android:value="b89d2427a3bc7ad1aea1e1e8c1d36bf3"/>
     </application>
 
 </manifest>

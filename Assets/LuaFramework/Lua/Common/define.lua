@@ -1,5 +1,14 @@
-
 CtrlNames = {
+	Prompt = "PromptCtrl",
+	Message = "MessageCtrl"
+}
+
+PanelNames = {
+	"PromptPanel",	
+	"MessagePanel",
+}
+
+ControllerNames = {
 	Login = "LoginCtrl",
 	Main = "MainCtrl"
 }
@@ -15,6 +24,8 @@ ProtocalType = {
 	PBC = 2,
 	SPROTO = 3,
 }
+--当前使用的协议类型--
+TestProtoType = ProtocalType.BINARY;
 
 Util = LuaFramework.Util;
 AppConst = LuaFramework.AppConst;
@@ -27,8 +38,9 @@ soundMgr = LuaHelper.GetSoundManager();
 networkMgr = LuaHelper.GetNetManager();
 
 WWW = UnityEngine.WWW;
-WWWForm = UnityEngine.WWWForm;
 GameObject = UnityEngine.GameObject;
+
+WWWForm = UnityEngine.WWWForm;
 ShareContent = cn.sharesdk.unity3d.ShareContent;
 ContentType = cn.sharesdk.unity3d.ContentType;
 

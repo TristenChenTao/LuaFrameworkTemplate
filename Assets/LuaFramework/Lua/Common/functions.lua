@@ -1,64 +1,3 @@
--- 系统默认约定的名字，忽略掉不创建对应引用，否则会异常
-function isNotSystemName(ctrlName)
-	if ctrlName == "button" or ctrlName == "title" or ctrlName == "icon" or ctrlName == "list" or ctrlName == "bar" or ctrlName == "bar_v" or ctrlName == "ani"
-		or ctrlName == "grip" or ctrlName == "arrow1" or ctrlName == "arrow2" or ctrlName == "frame" then
-		return false
-	else
-		return true
-	end 
-end
-
--- 自动为GComponent组件创建子控件对应的lua table同名域的对象引用
-function AutoCreateCompChild(contentPane, luatb)
-	local objName, childobj
-	for i = 0, contentPane.numChildren - 1 do
-		childobj = contentPane:GetChildAt(i)
-		objName = childobj.name
-		if (string.byte(objName, 1) == 110) and (tonumber(string.sub(objName, 2)) ~= nil) then
-		else if isNotSystemName(objName) then
-				 print("auto create child prop : " .. objName)
-				luatb[objName] = childobj
-			end
-		end
-	end
-
-end
-
--- @function: 打印table的内容，递归
--- @param: tbl 要打印的table
--- @param: level 递归的层数，默认不用传值进来
--- @param: filteDefault 是否过滤打印构造函数，默认为是
--- @return: return
-function printTable( tbl , level, filteDefault)
-  local msg = ""
-  filteDefault = filteDefault or true --默认过滤关键字（DeleteMe, _class_type）
-  level = level or 1
-  local indent_str = ""
-  for i = 1, level do
-    indent_str = indent_str.."  "
-  end
-
-  print(indent_str .. "{")
-  for k,v in pairs(tbl) do
-    if filteDefault then
-      if k ~= "_class_type" and k ~= "DeleteMe" then
-        local item_str = string.format("%s%s = %s", indent_str .. " ",tostring(k), tostring(v))
-        print(item_str)
-        if type(v) == "table" then
-          printTable(v, level + 1)
-        end
-      end
-    else
-      local item_str = string.format("%s%s = %s", indent_str .. " ",tostring(k), tostring(v))
-      print(item_str)
-      if type(v) == "table" then
-        printTable(v, level + 1)
-      end
-    end
-  end
-  print(indent_str .. "}")
-end
-
 --输出日志--
 function log(str)
     Util.Log(str);
@@ -248,4 +187,65 @@ table.tostring = function(t)
 	   return "{\n" .. string.rep("	", indent)..table.concat(tmp,",").."}"
 	end
 	return "do local ret="..ser_table(t,"ret",0)..table.concat(assign," ").." return ret end"
+end
+
+-- 系统默认约定的名字，忽略掉不创建对应引用，否则会异常
+function isNotSystemName(ctrlName)
+	if ctrlName == "button" or ctrlName == "title" or ctrlName == "icon" or ctrlName == "list" or ctrlName == "bar" or ctrlName == "bar_v" or ctrlName == "ani"
+		or ctrlName == "grip" or ctrlName == "arrow1" or ctrlName == "arrow2" or ctrlName == "frame" then
+		return false
+	else
+		return true
+	end 
+end
+
+-- 自动为GComponent组件创建子控件对应的lua table同名域的对象引用
+function AutoCreateCompChild(contentPane, luatb)
+	local objName, childobj
+	for i = 0, contentPane.numChildren - 1 do
+		childobj = contentPane:GetChildAt(i)
+		objName = childobj.name
+		if (string.byte(objName, 1) == 110) and (tonumber(string.sub(objName, 2)) ~= nil) then
+		else if isNotSystemName(objName) then
+				 print("auto create child prop : " .. objName)
+				luatb[objName] = childobj
+			end
+		end
+	end
+
+end
+
+-- @function: 打印table的内容，递归
+-- @param: tbl 要打印的table
+-- @param: level 递归的层数，默认不用传值进来
+-- @param: filteDefault 是否过滤打印构造函数，默认为是
+-- @return: return
+function printTable( tbl , level, filteDefault)
+  local msg = ""
+  filteDefault = filteDefault or true --默认过滤关键字（DeleteMe, _class_type）
+  level = level or 1
+  local indent_str = ""
+  for i = 1, level do
+    indent_str = indent_str.."  "
+  end
+
+  print(indent_str .. "{")
+  for k,v in pairs(tbl) do
+    if filteDefault then
+      if k ~= "_class_type" and k ~= "DeleteMe" then
+        local item_str = string.format("%s%s = %s", indent_str .. " ",tostring(k), tostring(v))
+        print(item_str)
+        if type(v) == "table" then
+          printTable(v, level + 1)
+        end
+      end
+    else
+      local item_str = string.format("%s%s = %s", indent_str .. " ",tostring(k), tostring(v))
+      print(item_str)
+      if type(v) == "table" then
+        printTable(v, level + 1)
+      end
+    end
+  end
+  print(indent_str .. "}")
 end

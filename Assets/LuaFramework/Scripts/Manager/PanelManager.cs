@@ -19,7 +19,7 @@ namespace LuaFramework {
         }
 
         /// <summary>
-        /// ������壬������Դ������
+        /// 创建面板，请求资源管理器
         /// </summary>
         /// <param name="type"></param>
         public void CreatePanel(string name, LuaFunction func = null) {
@@ -62,7 +62,7 @@ namespace LuaFramework {
         }
 
         /// <summary>
-        /// �ر����
+        /// 关闭面板
         /// </summary>
         /// <param name="name"></param>
         public void ClosePanel(string name) {
