@@ -32,8 +32,8 @@ function Game.OnInitOK()
     this.TestHTTP()
 
     --音乐播放
-    soundMgr:LoadAudioClip("AllUse_Music/audioStuff")
-    soundMgr:PlayBacksound("AllUse_Music/audioStuff",true) 
+    soundMgr:LoadAudioClip("AllUse/audioStuff")
+    soundMgr:PlayBacksound("AllUse/audioStuff",true) 
 end
 
 function Update()
