@@ -38,6 +38,9 @@ function Game.OnInitOK()
     --音乐播放
     soundMgr:LoadAudioClip("AllUse/audioStuff")
     soundMgr:PlayBacksound("AllUse/audioStuff",true) 
+
+    -- 持久化
+    this.TestPlayerPrefs()
 end
 
 function Update()
@@ -48,7 +51,6 @@ end
 function Game.OnDestroy()
 	--logWarn('OnDestroy--->>>');
 end
-
 
 function Game.TestHTTP()
 
@@ -70,4 +72,18 @@ function Game.ResponseHTTP(state,code,message, data)
     logWarn("code is "..state)
     logWarn("message is "..message)
     logWarn("data is "..data)
+end
+
+
+function Game.TestPlayerPrefs()
+    local stringKey = "StringKey"
+    local intKey = "IntKey"
+    PlayerPrefs.SetString(stringKey, "StringValue")
+    PlayerPrefs.SetInt(intKey, 99)
+
+    local strValue = PlayerPrefs.GetString(stringKey)
+    local intValue = PlayerPrefs.GetInt(intKey)
+
+    logWarn('strValue is'..strValue)
+    logWarn('intValue is'..intValue)
 end

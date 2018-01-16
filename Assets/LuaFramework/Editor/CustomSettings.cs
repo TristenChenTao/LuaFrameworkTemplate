@@ -219,6 +219,7 @@ public static class CustomSettings
         _GT(typeof(LuaWindow)),
 
         _GT(typeof(TweenUtils)),
+        _GT(typeof(PlayerPrefs)),
 
         //luaide
         _GT(typeof(LuaDebugTool)),

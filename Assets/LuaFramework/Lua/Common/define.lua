@@ -41,6 +41,7 @@ WWW = UnityEngine.WWW;
 GameObject = UnityEngine.GameObject;
 
 WWWForm = UnityEngine.WWWForm;
+PlayerPrefs = UnityEngine.PlayerPrefs;
 ShareContent = cn.sharesdk.unity3d.ShareContent;
 ContentType = cn.sharesdk.unity3d.ContentType;
 
