@@ -37,8 +37,8 @@ public class AppView : View {
         GButton button = view.GetChild ("wechatLogin").asButton;
         button.onClick.Add (() => {
 
-            Util.CallMethod ("Game", "OnInitOK");
-            view.Dispose ();
+            // 
+            // view.Dispose ();
         });
 
         this.updateDetail = view.GetChild ("updateDetail").asTextField;
