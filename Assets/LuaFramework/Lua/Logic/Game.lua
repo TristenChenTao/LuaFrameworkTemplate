@@ -44,7 +44,7 @@ function Game.OnInitOK()
 end
 
 function Update()
-    LuaFramework.Util.Log("每帧执行一次");
+   -- LuaFramework.Util.Log("每帧执行一次");
 end
 
 --销毁--

@@ -14,9 +14,26 @@ ControllerNames = {
 }
 
 EventTypes = {
-	LoginEvent = "LoginEvent"
+	LoginEvent = "LoginEvent",
+	Download = "download",
+	Share = "Share",
+	WechatPay = "WechatPay",
+	AliPay = "AliPay"
+
+}
+--支付平台类型
+PayType=
+{
+    Wechat = 1,
+    AliPay = 2
 }
 
+--手机平台类型
+PayTypePlatformType =
+{
+    ios = 1,
+    android = 2
+}
 --协议类型--
 ProtocalType = {
 	BINARY = 0,

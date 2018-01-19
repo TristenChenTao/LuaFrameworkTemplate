@@ -32,11 +32,16 @@ public class PayManager : MonoBehaviour
                     Action<string> Success,
                     Action<string> failure)
     {
-        Hashtable table = new Hashtable();
-        table["aa"] = "aa";
         PayInfoModel infoModel = new PayInfoModel();
         infoModel.token = token;
+        #if UNITY_EDITOR  
         infoModel.payType = PayTypes;
+        #elif UNITY_IPHONE  
+         infoModel.payType = PayTypePlatformType.ios+"";
+        #elif UNITY_ANDROID  
+         infoModel.payType = PayTypePlatformType.android+"";
+        #endif  
+        
         infoModel.osType = Platform;
         infoModel.productId = id;
          Debug.Log("C#中执行pay");

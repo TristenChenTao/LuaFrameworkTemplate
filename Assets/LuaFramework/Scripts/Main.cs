@@ -9,6 +9,7 @@ namespace LuaFramework {
 
         void Start() {
             AppFacade.Instance.StartUp();   //启动游戏
+           Util.CallMethod ("Game", "OnInitOK");
         }
     }
 }
