@@ -36,6 +36,8 @@ public class PayManager : MonoBehaviour
         infoModel.token = token;
         #if UNITY_EDITOR  
         infoModel.payType = PayTypes;
+        Debug.Log("支付请在手机上运行");
+        return;
         #elif UNITY_IPHONE  
          infoModel.payType = PayTypePlatformType.ios+"";
         #elif UNITY_ANDROID  
