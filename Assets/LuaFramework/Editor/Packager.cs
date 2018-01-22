@@ -79,10 +79,8 @@ public class Packager {
         HandleAudioBundle ();
 
         string resPath = "Assets/" + AppConst.AssetDir;
-        BuildAssetBundleOptions options = BuildAssetBundleOptions.DeterministicAssetBundle |
-            BuildAssetBundleOptions.ChunkBasedCompression;
-        BuildPipeline.BuildAssetBundles (resPath, maps.ToArray (), options, target);
-        BuildFileIndex ();
+        BuildPipeline.BuildAssetBundles(resPath, maps.ToArray(), BuildAssetBundleOptions.None, target);
+        BuildFileIndex();
 
         string streamDir = Application.dataPath + "/" + AppConst.LuaTempDir;
         if (Directory.Exists(streamDir)) Directory.Delete(streamDir, true);
