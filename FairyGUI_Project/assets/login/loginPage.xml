@@ -5,8 +5,8 @@
     <loader id="n4_wnyv" name="background" xy="0,0" size="1080,1920" url="ui://lb23giokwnyv4">
       <relation target="" sidePair="width-width,height-height"/>
     </loader>
-    <component id="n1_sjed" name="wechatLogin" src="ytwi1" xy="140,1700" size="800,100">
-      <gearXY controller="c1" pages="0,1" values="140,1700|440,200" tween="true"/>
+    <component id="n1_sjed" name="wechatLogin" src="ytwi1" xy="33,1215" size="215,110">
+      <gearXY controller="c1" pages="0,1" values="33,1215|440,200" tween="true"/>
       <relation target="" sidePair="center-center,bottom-bottom%"/>
       <relation target="" sidePair="width-width%"/>
       <Button title="微信登录" titleFontSize="30"/>
@@ -21,5 +21,15 @@
     <loader id="n7_7xal" name="imageView" xy="0,622" size="1080,200">
       <relation target="" sidePair="top-top%,height-height"/>
     </loader>
+    <component id="n8_8xmt" name="ailPay" src="ytwi2" xy="33,815" controller="c1,1">
+      <gearDisplay controller="c1" pages=""/>
+      <gearText controller="c1" default=""/>
+    </component>
+    <component id="n9_8xmt" name="weChatPay" src="ytwi2" xy="33,1015" controller="c1,0"/>
+    <component id="n10_ipb0" name="download" src="ytwi2" xy="33,1415" controller="c1,2">
+      <gearDisplay controller="c1" pages=""/>
+    </component>
+    <component id="n11_ipb0" name="share" src="ytwi2" xy="33,1615" controller="c1,3"/>
+    <loader id="n15_ipb0" name="image" xy="345,1234" size="456,371"/>
   </displayList>
 </component>

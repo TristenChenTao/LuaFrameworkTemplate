@@ -9,9 +9,15 @@ namespace LuaFramework {
     public class SoundManager : Manager {
         private AudioSource audio;
         private Hashtable sounds = new Hashtable();
-
-        void Start() {
+        /// <summary>
+        /// Awake is called when the script instance is being loaded.
+        /// </summary>
+        void Awake()
+        {
             audio = GetComponent<AudioSource>();
+            
+        }
+        void Start() {
         }
 
         /// <summary>

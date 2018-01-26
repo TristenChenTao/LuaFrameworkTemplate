@@ -1,8 +1,7 @@
-﻿using UnityEngine;
-using LuaFramework;
-using System.Collections.Generic;
-
+﻿using System.Collections.Generic;
 using FairyGUI;
+using LuaFramework;
+using UnityEngine;
 
 public class AppView : View {
     private string message;
@@ -14,78 +13,77 @@ public class AppView : View {
     ///</summary>
     List<string> MessageList {
         get {
-            return new List<string>()
-            { 
+            return new List<string> () {
                 NotiConst.UPDATE_MESSAGE,
-                NotiConst.UPDATE_EXTRACT,
-                NotiConst.UPDATE_DOWNLOAD,
-                NotiConst.UPDATE_PROGRESS,
+                    NotiConst.UPDATE_EXTRACT,
+                    NotiConst.UPDATE_DOWNLOAD,
+                    NotiConst.UPDATE_PROGRESS,
             };
         }
     }
 
-    void Awake() {
-        RemoveMessage(this, MessageList);
-        RegisterMessage(this, MessageList);
+    void Awake () {
+        RemoveMessage (this, MessageList);
+        RegisterMessage (this, MessageList);
 
-        GRoot.inst.SetContentScaleFactor(1080, 1920, UIContentScaler.ScreenMatchMode.MatchWidthOrHeight);               
-        UIPackage.AddPackage("UI/login");           
-        GComponent view = UIPackage.CreateObject("login", "loginPage").asCom; 
- 
-        view.SetSize(GRoot.inst.width,GRoot.inst.height);
-        view.AddRelation(GRoot.inst, RelationType.Size);
-        GRoot.inst.AddChild(view);
+        GRoot.inst.SetContentScaleFactor (1080, 1920, UIContentScaler.ScreenMatchMode.MatchWidthOrHeight);
+        UIPackage.AddPackage ("UI/login");
+        GComponent view = UIPackage.CreateObject ("login", "loginPage").asCom;
 
-        GButton button = view.GetChild("wechatLogin").asButton;
-        button.onClick.Add(() =>{
-            Util.CallMethod("Game", "OnInitOK");
+        view.SetSize (GRoot.inst.width, GRoot.inst.height);
+        view.AddRelation (GRoot.inst, RelationType.Size);
+        GRoot.inst.AddChild (view);
 
-            view.Dispose();
+        GButton button = view.GetChild ("wechatLogin").asButton;
+        button.onClick.Add (() => {
+
+            // 
+            // view.Dispose ();
         });
 
-        this.updateDetail = view.GetChild("updateDetail").asTextField;
+        this.updateDetail = view.GetChild ("updateDetail").asTextField;
     }
 
     /// <summary>
     /// 处理View消息
     /// </summary>
     /// <param name="message"></param>
-    public override void OnMessage(IMessage message) {
+    public override void OnMessage (IMessage message) {
         string name = message.Name;
         object body = message.Body;
         switch (name) {
-            case NotiConst.UPDATE_MESSAGE:      //更新消息
-                UpdateMessage(body.ToString());
-            break;
-            case NotiConst.UPDATE_EXTRACT:      //更新解压
-                UpdateExtract(body.ToString());
-            break;
-            case NotiConst.UPDATE_DOWNLOAD:     //更新下载
-                UpdateDownload(body.ToString());
-            break;
-            case NotiConst.UPDATE_PROGRESS:     //更新下载进度
-                UpdateProgress(body.ToString());
-            break;
+            case NotiConst.UPDATE_MESSAGE: //更新消息
+                UpdateMessage (body.ToString ());
+                break;
+            case NotiConst.UPDATE_EXTRACT: //更新解压
+                UpdateExtract (body.ToString ());
+                break;
+            case NotiConst.UPDATE_DOWNLOAD: //更新下载
+                UpdateDownload (body.ToString ());
+                break;
+            case NotiConst.UPDATE_PROGRESS: //更新下载进度
+                UpdateProgress (body.ToString ());
+                break;
         }
     }
 
-    public void UpdateMessage(string data) {
+    public void UpdateMessage (string data) {
         this.message = data;
     }
 
-    public void UpdateExtract(string data) {
+    public void UpdateExtract (string data) {
         this.message = data;
     }
 
-    public void UpdateDownload(string data) {
+    public void UpdateDownload (string data) {
         this.message = data;
     }
 
-    public void UpdateProgress(string data) {
+    public void UpdateProgress (string data) {
         this.message = data;
     }
 
-    void OnGUI() {
+    void OnGUI () {
         // Debug.Log("update message is "+ message);
 
         this.updateDetail.text = message;

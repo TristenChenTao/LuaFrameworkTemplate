@@ -42,6 +42,8 @@ public class DelegateFactory
 		dict.Add(typeof(FairyGUI.UIPackage.CreateObjectCallback), factory.FairyGUI_UIPackage_CreateObjectCallback);
 		dict.Add(typeof(FairyGUI.GObjectPool.InitCallbackDelegate), factory.FairyGUI_GObjectPool_InitCallbackDelegate);
 		dict.Add(typeof(FairyGUI.TimerCallback), factory.FairyGUI_TimerCallback);
+		dict.Add(typeof(System.Action<UnityEngine.Purchasing.Product[]>), factory.System_Action_UnityEngine_Purchasing_Products);
+		dict.Add(typeof(System.Action<string>), factory.System_Action_string);
 
 		DelegateTraits<System.Action>.Init(factory.System_Action);
 		DelegateTraits<UnityEngine.Events.UnityAction>.Init(factory.UnityEngine_Events_UnityAction);
@@ -68,6 +70,8 @@ public class DelegateFactory
 		DelegateTraits<FairyGUI.UIPackage.CreateObjectCallback>.Init(factory.FairyGUI_UIPackage_CreateObjectCallback);
 		DelegateTraits<FairyGUI.GObjectPool.InitCallbackDelegate>.Init(factory.FairyGUI_GObjectPool_InitCallbackDelegate);
 		DelegateTraits<FairyGUI.TimerCallback>.Init(factory.FairyGUI_TimerCallback);
+		DelegateTraits<System.Action<UnityEngine.Purchasing.Product[]>>.Init(factory.System_Action_UnityEngine_Purchasing_Products);
+		DelegateTraits<System.Action<string>>.Init(factory.System_Action_string);
 
 		TypeTraits<System.Action>.Init(factory.Check_System_Action);
 		TypeTraits<UnityEngine.Events.UnityAction>.Init(factory.Check_UnityEngine_Events_UnityAction);
@@ -94,6 +98,8 @@ public class DelegateFactory
 		TypeTraits<FairyGUI.UIPackage.CreateObjectCallback>.Init(factory.Check_FairyGUI_UIPackage_CreateObjectCallback);
 		TypeTraits<FairyGUI.GObjectPool.InitCallbackDelegate>.Init(factory.Check_FairyGUI_GObjectPool_InitCallbackDelegate);
 		TypeTraits<FairyGUI.TimerCallback>.Init(factory.Check_FairyGUI_TimerCallback);
+		TypeTraits<System.Action<UnityEngine.Purchasing.Product[]>>.Init(factory.Check_System_Action_UnityEngine_Purchasing_Products);
+		TypeTraits<System.Action<string>>.Init(factory.Check_System_Action_string);
 
 		StackTraits<System.Action>.Push = factory.Push_System_Action;
 		StackTraits<UnityEngine.Events.UnityAction>.Push = factory.Push_UnityEngine_Events_UnityAction;
@@ -120,6 +126,8 @@ public class DelegateFactory
 		StackTraits<FairyGUI.UIPackage.CreateObjectCallback>.Push = factory.Push_FairyGUI_UIPackage_CreateObjectCallback;
 		StackTraits<FairyGUI.GObjectPool.InitCallbackDelegate>.Push = factory.Push_FairyGUI_GObjectPool_InitCallbackDelegate;
 		StackTraits<FairyGUI.TimerCallback>.Push = factory.Push_FairyGUI_TimerCallback;
+		StackTraits<System.Action<UnityEngine.Purchasing.Product[]>>.Push = factory.Push_System_Action_UnityEngine_Purchasing_Products;
+		StackTraits<System.Action<string>>.Push = factory.Push_System_Action_string;
 	}
     
     public static Delegate CreateDelegate(Type t, LuaFunction func = null)
@@ -1664,6 +1672,120 @@ public class DelegateFactory
 	}
 
 	void Push_FairyGUI_TimerCallback(IntPtr L, FairyGUI.TimerCallback o)
+	{
+		ToLua.Push(L, o);
+	}
+
+	class System_Action_UnityEngine_Purchasing_Products_Event : LuaDelegate
+	{
+		public System_Action_UnityEngine_Purchasing_Products_Event(LuaFunction func) : base(func) { }
+		public System_Action_UnityEngine_Purchasing_Products_Event(LuaFunction func, LuaTable self) : base(func, self) { }
+
+		public void Call(UnityEngine.Purchasing.Product[] param0)
+		{
+			func.BeginPCall();
+			func.Push(param0);
+			func.PCall();
+			func.EndPCall();
+		}
+
+		public void CallWithSelf(UnityEngine.Purchasing.Product[] param0)
+		{
+			func.BeginPCall();
+			func.Push(self);
+			func.Push(param0);
+			func.PCall();
+			func.EndPCall();
+		}
+	}
+
+	public System.Action<UnityEngine.Purchasing.Product[]> System_Action_UnityEngine_Purchasing_Products(LuaFunction func, LuaTable self, bool flag)
+	{
+		if (func == null)
+		{
+			System.Action<UnityEngine.Purchasing.Product[]> fn = delegate(UnityEngine.Purchasing.Product[] param0) { };
+			return fn;
+		}
+
+		if(!flag)
+		{
+			System_Action_UnityEngine_Purchasing_Products_Event target = new System_Action_UnityEngine_Purchasing_Products_Event(func);
+			System.Action<UnityEngine.Purchasing.Product[]> d = target.Call;
+			target.method = d.Method;
+			return d;
+		}
+		else
+		{
+			System_Action_UnityEngine_Purchasing_Products_Event target = new System_Action_UnityEngine_Purchasing_Products_Event(func, self);
+			System.Action<UnityEngine.Purchasing.Product[]> d = target.CallWithSelf;
+			target.method = d.Method;
+			return d;
+		}
+	}
+
+	bool Check_System_Action_UnityEngine_Purchasing_Products(IntPtr L, int pos)
+	{
+		return TypeChecker.CheckDelegateType(typeof(System.Action<UnityEngine.Purchasing.Product[]>), L, pos);
+	}
+
+	void Push_System_Action_UnityEngine_Purchasing_Products(IntPtr L, System.Action<UnityEngine.Purchasing.Product[]> o)
+	{
+		ToLua.Push(L, o);
+	}
+
+	class System_Action_string_Event : LuaDelegate
+	{
+		public System_Action_string_Event(LuaFunction func) : base(func) { }
+		public System_Action_string_Event(LuaFunction func, LuaTable self) : base(func, self) { }
+
+		public void Call(string param0)
+		{
+			func.BeginPCall();
+			func.Push(param0);
+			func.PCall();
+			func.EndPCall();
+		}
+
+		public void CallWithSelf(string param0)
+		{
+			func.BeginPCall();
+			func.Push(self);
+			func.Push(param0);
+			func.PCall();
+			func.EndPCall();
+		}
+	}
+
+	public System.Action<string> System_Action_string(LuaFunction func, LuaTable self, bool flag)
+	{
+		if (func == null)
+		{
+			System.Action<string> fn = delegate(string param0) { };
+			return fn;
+		}
+
+		if(!flag)
+		{
+			System_Action_string_Event target = new System_Action_string_Event(func);
+			System.Action<string> d = target.Call;
+			target.method = d.Method;
+			return d;
+		}
+		else
+		{
+			System_Action_string_Event target = new System_Action_string_Event(func, self);
+			System.Action<string> d = target.CallWithSelf;
+			target.method = d.Method;
+			return d;
+		}
+	}
+
+	bool Check_System_Action_string(IntPtr L, int pos)
+	{
+		return TypeChecker.CheckDelegateType(typeof(System.Action<string>), L, pos);
+	}
+
+	void Push_System_Action_string(IntPtr L, System.Action<string> o)
 	{
 		ToLua.Push(L, o);
 	}

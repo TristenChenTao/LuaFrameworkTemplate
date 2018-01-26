@@ -233,6 +233,7 @@ public static class CustomSettings
         _GT(typeof(NTexture)),
         _GT(typeof(ShareContent)),
         _GT(typeof(ContentType)),
+        _GT(typeof(PayManager)),
     };
 
     public static List<Type> dynamicList = new List<Type>()
