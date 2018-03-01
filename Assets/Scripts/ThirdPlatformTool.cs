@@ -38,7 +38,7 @@ public class ThirdPlatformTool {
 
 		PlatformType finaltype = ThirdPlatformTool.fromInt(type);
 		 _SSDK.ShareContent(finaltype, content);
-		_SSDK.ShareContent (PlatformType.WeChat, content);
+		//_SSDK.ShareContent (PlatformType.WeChat, content);
 			
 		_ShareLuaFunc = func;
 	}	

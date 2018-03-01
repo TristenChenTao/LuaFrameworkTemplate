@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using LuaInterface;
 using System.Reflection;
 using System.IO;
-
-
+using BestHTTP;
+using LitJson;
 namespace LuaFramework {
     public class GameManager : Manager {
         protected static bool initialize = false;
@@ -18,17 +18,154 @@ namespace LuaFramework {
         void Awake() {
             Init();
         }
-
+static GameObject go;
         /// <summary>
         /// 初始化
         /// </summary>
-        void Init() {
-            DontDestroyOnLoad(gameObject);  //防止销毁自己
-
-            CheckExtractResource(); //释放资源
+       public void Init() {
+         //  GameManager.GetOrCreate(gameObject);
+            DontDestroyOnLoad(gameObject==null?go:gameObject);  //防止销毁自己
+            if (AppConst.ForceUpdateMode)
+            {
+                CheckForceUpdata();
+            }else{
+                CheckExtractResource(); //释放资源
+            }
+           
+          
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
             Application.targetFrameRate = AppConst.GameFrameRate;
         }
+
+
+    public void AddComponent(){
+        if (go==null)
+       {
+              go = GameObject.Find("GameManager");
+            go.AddComponent<GameManager>();
+       }
+    }
+        /// <summary>
+        /// 检查强制更新
+        /// </summary>
+        public void CheckForceUpdata(){
+             facade.SendMessageCommand(NotiConst.UPDATE_FORCE_CHECK, "检查强制更新");
+            if (Application.internetReachability == NetworkReachability.NotReachable)
+            {   
+                CheckForceUpdataFail();
+                return;
+            }else{
+
+            }
+            string url = AppConst.ForceUpdataUrl;
+            
+          //测试
+          //  string url = "http://test.majiang.esgame.com/Version/VersionUpdate?version=1.1&Com_PT=2";
+            
+             HTTPRequest httpRequest = new HTTPRequest(new Uri(url),
+         HTTPMethods.Get,
+        (req, response) => {
+			int code = 0;
+			string message = "";
+			string dataString = "";
+
+            if (req.Exception != null){
+
+				message = req.Exception.ToString();
+                Debug.Log("Exception = "+message);
+				CheckForceUpdataFail();
+            }
+            else {
+                try {
+                    if (response!=null) {
+                        Debug.Log("请求的Url: "+url+"=====>"+response.DataAsText);
+                    	JsonData jsonData = JsonMapper.ToObject(response.DataAsText);
+
+                    	code = int.Parse(jsonData["ResultCode"].ToString());
+                        if (code==null)
+                        {
+                            Debug.Log("Code非int类型");
+                        }
+						message = jsonData["ResultMessage"].ToString();
+
+						JsonData data = jsonData["Data"];
+						
+                    
+
+					
+					Debug.Log("code： " + code);
+					Debug.Log("message " + message);
+					
+                    if (code == -2) //无强制更新
+                    {   
+                        facade.SendMessageCommand(NotiConst.UPDATE_FORCE_NONE, "");
+                        CheckExtractResource(); //释放资源
+                    }else if (code == 1) //有强制更新
+                    {   
+                        
+						if(data != null) {
+							dataString = JsonMapper.ToJson(data);
+                            Debug.Log("dataString " + dataString);
+
+                           string DownUrl = data["DownUrl"].ToString();
+                           Debug.Log(DownUrl);
+                             facade.SendMessageCommand(NotiConst.UPDATE_FORCE, DownUrl);
+						}
+                    }
+
+                    }else{
+                        CheckForceUpdataFail();
+                    }
+					
+                }
+                catch (Exception ex) {
+                    Debug.Log(ex);
+					message = ex.ToString();
+					CheckForceUpdataFail();
+                }
+            }
+        });
+
+        //测试注释掉
+        WWWForm parameter=new WWWForm();
+		parameter.AddField("version", AppConst.Product_Version);
+		#if UNITY_ANDROID
+        
+			 parameter.AddField("Com_PT", 2);
+		#elif UNITY_IPHONE
+			 parameter.AddField("Com_PT", 1);
+             #elif UNITY_EDITOR
+             parameter.AddField("Com_PT", 2);
+            
+		#endif
+        httpRequest.SetFields(parameter);
+
+        httpRequest.Send();
+
+            
+        }
+
+         /// <summary>
+        /// 检查强制更新
+        /// </summary>
+        public void CheckForceUpdataFail(){
+            facade.SendMessageCommand(NotiConst.UPDATE_FORCE_CHECKFAIL, "");
+            
+        }
+ public GameManager()
+    {
+         
+    }
+
+    
+    static public GameManager GetOrCreate(GameObject gameObject) {
+        if (gameObject == null) { 
+            
+            return new GameManager(); }
+        var existed = gameObject.GetComponent <GameManager>();
+        return existed ?? gameObject.AddComponent <GameManager>();
+    }
+
 
         /// <summary>
         /// 释放资源
@@ -37,10 +174,10 @@ namespace LuaFramework {
             bool isExists = Directory.Exists(Util.DataPath) &&
               Directory.Exists(Util.DataPath + "lua/") && File.Exists(Util.DataPath + "files.txt");
             if (isExists || AppConst.DebugMode) {
-                StartCoroutine(OnUpdateResource());
+                StartCoroutine(GameManager.GetOrCreate(gameObject).OnUpdateResource());
                 return;   //文件已经解压过了，自己可添加检查文件列表逻辑
             }
-            StartCoroutine(OnExtractResource());    //启动释放协成 
+            StartCoroutine(GameManager.GetOrCreate(gameObject).OnExtractResource());    //启动释放协成 
         }
 
         IEnumerator OnExtractResource() {
@@ -70,13 +207,17 @@ namespace LuaFramework {
 
             //释放所有文件到数据目录
             string[] files = File.ReadAllLines(outfile);
-            foreach (var file in files) {
+            int totalCount = files.Length;
+            for (int i = 0; i < files.Length; i++)
+            {
+                var file = files[i];
+           
                 string[] fs = file.Split('|');
                 infile = resPath + fs[0];  //
                 outfile = dataPath + fs[0];
-
-                message = "正在解包文件:>" + fs[0];
-                Debug.Log("正在解包文件:>" + infile);
+                double progresValue= (double)i/totalCount;
+                message = "正在解包文件"+Math.Round(progresValue*100,2);
+                Debug.Log(message);
                 facade.SendMessageCommand(NotiConst.UPDATE_MESSAGE, message);
 
                 string dir = Path.GetDirectoryName(outfile);
@@ -98,7 +239,7 @@ namespace LuaFramework {
                 }
                 yield return new WaitForEndOfFrame();
             }
-            message = "解包完成!!!";
+            message = "解包完成!";
             facade.SendMessageCommand(NotiConst.UPDATE_MESSAGE, message);
             yield return new WaitForSeconds(0.1f);
 
@@ -133,7 +274,7 @@ namespace LuaFramework {
             File.WriteAllBytes(dataPath + "files.txt", www.bytes);
             string filesText = www.text;
             string[] files = filesText.Split('\n');
-
+            int totalCount2 = files.Length;
             for (int i = 0; i < files.Length; i++) {
                 if (string.IsNullOrEmpty(files[i])) continue;
                 string[] keyValue = files[i].Split('|');
@@ -153,7 +294,10 @@ namespace LuaFramework {
                 }
                 if (canUpdate) {   //本地缺少文件
                     Debug.Log(fileUrl);
-                    message = "downloading>>" + fileUrl;
+                    double progressValue2 = (double)i/totalCount2;
+                    
+                    message = "正在下载更新文件"+Math.Round(progressValue2*100,2);
+                    Debug.Log(message);
                     facade.SendMessageCommand(NotiConst.UPDATE_MESSAGE, message);
                     /*
                     www = new WWW(fileUrl); yield return www;
@@ -170,14 +314,14 @@ namespace LuaFramework {
             }
             yield return new WaitForEndOfFrame();
 
-            message = "更新完成!!";
+            message = "更新完成!";
             facade.SendMessageCommand(NotiConst.UPDATE_MESSAGE, message);
 
             OnResourceInited();
         }
 
         void OnUpdateFailed(string file) {
-            string message = "更新失败!>" + file;
+            string message = "更新失败!";
             facade.SendMessageCommand(NotiConst.UPDATE_MESSAGE, message);
         }
 
@@ -234,8 +378,10 @@ namespace LuaFramework {
             LuaManager.InitStart();
             LuaManager.DoFile("Logic/Game");         //加载游戏
             LuaManager.DoFile("Logic/Network");      //加载网络
+            LuaManager.DoFile("Logic/Network2");      //加载网络
             NetManager.OnInit();                     //初始化网络
-            // Util.CallMethod("Game", "OnInitOK");     //初始化完成
+            NetManager2.OnInit();                     //初始化网络
+            Util.CallMethod("Game", "OnInitOK");     //初始化完成
 
             initialize = true;
 

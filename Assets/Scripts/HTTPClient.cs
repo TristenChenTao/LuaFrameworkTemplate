@@ -17,6 +17,32 @@ public class HTTPClient {
 		Fail = 0
     };　
 
+	public static string com_pt ="";
+
+	public static string GetComPt(){
+		#if UNITY_ANDROID
+			
+			 com_pt = "2";
+		#elif UNITY_IPHONE
+			
+			  com_pt = "1";
+		#endif
+		return com_pt;
+	}
+
+	public static bool IsEditor(){
+		bool isEditor = false;
+		#if UNITY_EDITOR
+			
+	
+			isEditor = true;
+		#endif
+		return isEditor;
+	}
+	public static string MaJiang_UID;
+	public static string MaJiang_UID_MD5;
+	public static string MaJiang_NickName;
+
 	public static void Request (int methodType, string url, WWWForm parameter,  LuaFunction func = null) {
 		
 		HTTPMethods type = HTTPMethods.Get;
@@ -48,7 +74,7 @@ public class HTTPClient {
             else {
                 try {
                     if (response!=null) {
-                        
+                        Debug.Log("请求的Url: "+url+"=====>"+response.DataAsText);
                     	JsonData jsonData = JsonMapper.ToObject(response.DataAsText);
 
                     	code = int.Parse(jsonData["ResultCode"].ToString());
@@ -85,13 +111,34 @@ public class HTTPClient {
 		
 		parameter.AddField("Com_Ver", AppConst.Product_Version);
 		
+		if(!string.IsNullOrEmpty(MaJiang_UID)) {
+			parameter.AddField("MaJiang_UID", MaJiang_UID);
+		}
+		if(!string.IsNullOrEmpty(MaJiang_NickName)) {
+			parameter.AddField("MaJiang_NickName", MaJiang_NickName);
+		}
+		if(!string.IsNullOrEmpty(MaJiang_UID_MD5)) {
+			parameter.AddField("MaJiang_UID_MD5", MaJiang_UID_MD5);
+				Debug.Log("MaJiang_UID_MD5.Uri" );
+		}else{
+			Debug.Log("MaJiang_UID_MD5.===null" );
+		}
+		// parameter.AddField("MaJiang_NickName", "ceshi2");
+		// 	parameter.AddField("MaJiang_UID_MD5", "E02DEB3D27D57FF0143306A4972CE9AB");
+		// 	parameter.AddField("MaJiang_UID", 6);
 		#if UNITY_ANDROID
-			 parameter.AddField("Com_GamePt", 2);
+			 parameter.AddField("com_pt", 2);
+			
 		#elif UNITY_IPHONE
-			 parameter.AddField("Com_GamePt", 1);
+			 parameter.AddField("com_pt", 1);
+			 
 		#endif
-       
+
         httpRequest.SetFields(parameter);
+	
+		
+		//BestHTTP.Cookies.CookieJar.Clear();  
+		
         httpRequest.Send();
 	}
 

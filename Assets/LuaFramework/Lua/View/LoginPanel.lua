@@ -21,11 +21,12 @@ end
 function LoginPanel:BindEvent()
     -- 自动搜索到子控件， 变量名为 FairyGUI 中的控件名称
     self.wechatLogin.onClick:Add(
-        function()
-
+        function()  
             Event.Brocast(EventTypes.LoginEvent, "event with message")
         end
+
     )
+
     self.ailPay.onClick:Add(
         function()
             

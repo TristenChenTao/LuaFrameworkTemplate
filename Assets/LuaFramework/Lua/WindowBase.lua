@@ -1,8 +1,5 @@
 require "FairyGUI"
 
-GRoot.inst:SetContentScaleFactor(1080,1920)
-
----@class WindowBase
 WindowBase = fgui.window_class()
 WindowBase.className = "WindowBase"
 WindowBase.animation = { "", ""}
@@ -81,7 +78,6 @@ function WindowBase:OnInit2()
     -- 自动创建子控件对应的lua域引用
     AutoCreateCompChild(self.contentPane, self)
 
-
     --[[local fullScreen = self.width == 1136 and self.height == 640
     if self.frame ~=nil and fullScreen then
         self.x = math.ceil((GRoot.inst.width - self.width)/2)
@@ -98,6 +94,7 @@ function WindowBase:OnInit2()
         self:SetSize(GRoot.inst.width, GRoot.inst.height)
     end
 ]]
+    self:SetSize(GRoot.inst.width, GRoot.inst.height)
     self:DoInit()
 end
 

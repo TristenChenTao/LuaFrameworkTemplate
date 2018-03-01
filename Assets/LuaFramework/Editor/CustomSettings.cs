@@ -34,6 +34,7 @@ public static class CustomSettings
         typeof(UnityEngine.QualitySettings),
         typeof(UnityEngine.GL),
         typeof(UnityEngine.Graphics),
+        // typeof(UnityEngine.SystemInfo),
     };
 
     //附加导出委托类型(在导出委托时, customTypeList 中牵扯的委托类型都会导出， 无需写在这里)
@@ -60,10 +61,12 @@ public static class CustomSettings
         //_GT(typeof(Dictionary<int, TestAccount>.ValueCollection)),
         //_GT(typeof(TestExport)),
         //_GT(typeof(TestExport.Space)),
-        //-------------------------------------------------------------------        
-                        
-        _GT(typeof(Debugger)).SetNameSpace(null),          
-
+        //-------------------------------------------------------------------                
+        _GT(typeof(Debugger)).SetNameSpace(null),   
+        _GT(typeof(UnityEngine.SystemInfo)),
+        _GT(typeof(UnityEngine.NetworkReachability)),       
+        _GT(typeof(FairyGUI.UIContentScaler)),   
+        _GT(typeof(FairyGUI.UIContentScaler.ScreenMatchMode)),  
 #if USING_DOTWEENING
         _GT(typeof(DG.Tweening.DOTween)),
         _GT(typeof(DG.Tweening.Tween)).SetBaseType(typeof(System.Object)).AddExtendType(typeof(DG.Tweening.TweenExtensions)),
@@ -85,6 +88,8 @@ public static class CustomSettings
 #else
                                          
         _GT(typeof(Component)),
+       
+       
         _GT(typeof(Transform)),
         _GT(typeof(Material)),
         _GT(typeof(Light)),
@@ -170,6 +175,7 @@ public static class CustomSettings
         _GT(typeof(TimerManager)),
         _GT(typeof(ThreadManager)),
         _GT(typeof(NetworkManager)),
+        _GT(typeof(NetworkManager2)),
         _GT(typeof(ResourceManager)),	
 
         _GT(typeof(EventContext)),
@@ -208,6 +214,7 @@ public static class CustomSettings
         _GT(typeof(Relations)),
         _GT(typeof(RelationType)),
         _GT(typeof(Timers)),
+        _GT(typeof(DragDropManager)),
 
         _GT(typeof(LuaUIHelper)),
         _GT(typeof(GLuaComponent)),
@@ -220,20 +227,27 @@ public static class CustomSettings
 
         _GT(typeof(TweenUtils)),
         _GT(typeof(PlayerPrefs)),
+        _GT(typeof(TakeScreenshot)),
+        _GT(typeof(ShareContent)),
+        _GT(typeof(ContentType)),
 
         //luaide
         _GT(typeof(LuaDebugTool)),
         _GT(typeof(LuaValueInfo)),
 
+
         //game extension
         _GT(typeof(ExUIPackage)),
+        _GT(typeof(PingTool)),
         _GT(typeof(ThirdPlatformTool)),
+        _GT(typeof(SocketSecret)),
         _GT(typeof(HTTPClient)),
         _GT(typeof(WWWForm)),
         _GT(typeof(NTexture)),
-        _GT(typeof(ShareContent)),
-        _GT(typeof(ContentType)),
-        _GT(typeof(PayManager)),
+        _GT(typeof(MessageQueue)),
+        //custom extension
+        _GT(typeof(CustomCSharpMethod)),
+        _GT(typeof(TimerCountDown)),
     };
 
     public static List<Type> dynamicList = new List<Type>()

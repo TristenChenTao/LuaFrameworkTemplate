@@ -3,6 +3,7 @@ local timer = Timer.New(function()
 breakSocketHandle() end, 1, -1, false)
 timer:Start();
 
+require "Common/define"
 require "Logic/LuaClass"
 require "Logic/CtrlManager"
 require "Common/functions"
@@ -14,12 +15,12 @@ local this = Game;
 --初始化完成，发送链接服务器信息--
 function Game.OnInitOK()
 
-
     -- Socket 
-    AppConst.SocketAddress = "119.23.173.121";
-    AppConst.SocketPort = 4020;
-    networkMgr:SendConnect() -- Network.lua 里处理收发消息
-    Network.Send("loginauto") -- Socket 发包
+    networkMgr:SendConnect("119.23.173.121",4020) -- Network.lua 里处理收发消息
+    Network.Send("loginauto","") -- Socket 发包
+
+    -- networkMgr2:SendConnect("119.23.173.121",4030) -- Network.lua 里处理收发消息
+    -- Network2.Send("loginauto","") -- Socket 发包
 
     CtrlManager.Init();
     local ctrl = CtrlManager.GetCtrl(ControllerNames.Login);
@@ -34,11 +35,6 @@ function Game.OnInitOK()
 
     -- HTTP  
     this.TestHTTP()
-
-    --音乐播放
-    soundMgr:LoadAudioClip("AllUse/audioStuff")
-    soundMgr:PlayBacksound("AllUse/audioStuff",true) 
-
     -- 持久化
     this.TestPlayerPrefs()
 end

@@ -8,7 +8,8 @@ public class NotiConst
     /// </summary>
     public const string START_UP = "StartUp";                       //启动框架
     public const string DISPATCH_MESSAGE = "DispatchMessage";       //派发信息
-
+    public const string DISPATCH_MESSAGE2 = "DispatchMessage2";       //派发信息
+    
     /// <summary>
     /// View层消息通知
     /// </summary>
@@ -16,4 +17,8 @@ public class NotiConst
     public const string UPDATE_EXTRACT = "UpdateExtract";           //更新解包
     public const string UPDATE_DOWNLOAD = "UpdateDownload";         //更新下载
     public const string UPDATE_PROGRESS = "UpdateProgress";         //更新进度
+    public const string UPDATE_FORCE_CHECK = "UPDATE_FORCE_CHECK";              //强制更新
+    public const string UPDATE_FORCE = "UPDATE_FORCE";              //强制更新
+    public const string UPDATE_FORCE_CHECKFAIL = "UPDATE_FORCE_CHECKFAIL";              //强制更新
+    public const string UPDATE_FORCE_NONE = "UPDATE_FORCE_NONE";              //无需强制更新
 }

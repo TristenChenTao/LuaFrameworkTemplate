@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="1080,1920">
+  <displayList>
+    <image id="n0_m8j2" name="n0" src="wnyv4" xy="0,0">
+      <relation target="" sidePair="center-center,middle-middle"/>
+    </image>
+  </displayList>
+</component>

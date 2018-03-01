@@ -249,3 +249,42 @@ function printTable( tbl , level, filteDefault)
   end
   print(indent_str .. "}")
 end
+
+function string.widthSingle(inputstr)
+    -- 计算字符串宽度
+    -- 可以计算出字符宽度，用于显示使用
+   local lenInByte = #inputstr
+   local width = 0
+   local i = 1
+    while (i<=lenInByte) 
+    do
+        local curByte = string.byte(inputstr, i)
+		local byteCount = 1;
+		if curByte>0 and curByte<=127 then
+            byteCount = 1                                               --1字节字符
+        elseif curByte>=192 then
+			byteCount = 2  
+		end                                            
+
+        -- if curByte>0 and curByte<=127 then
+        --     byteCount = 1                                               --1字节字符
+        -- elseif curByte>=192 and curByte<223 then
+        --     byteCount = 2                                               --双字节字符
+        -- elseif curByte>=224 and curByte<239 then
+        --     byteCount = 3                                               --汉字
+        -- elseif curByte>=240 and curByte<=247 then
+        --     byteCount = 4                                               --4字节字符
+        -- end
+         
+        local char = string.sub(inputstr, i, i+byteCount-1)
+
+        i = i + byteCount                                              -- 重置下一字节的索引
+        width = width + 1                                             -- 字符的个数（长度）
+    end
+    return width
+end
+
+--时间戳转换时间
+function GetTimeStamp(dateFormat, t)
+    return os.date(dateFormat,t)
+end

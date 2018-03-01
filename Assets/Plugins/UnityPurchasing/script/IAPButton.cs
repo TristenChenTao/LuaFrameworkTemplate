@@ -207,7 +207,7 @@ namespace UnityEngine.Purchasing
             private static IAPButtonStoreManager instance = new IAPButtonStoreManager();
             private ProductCatalog catalog;
             private List<IAPButton> activeButtons = new List<IAPButton>();
-            private IAPListener m_Listener;
+            private List<IAPListener> activeListeners = new List<IAPListener> ();
 
             protected IStoreController controller;
             protected IExtensionProvider extensions;
@@ -274,16 +274,12 @@ namespace UnityEngine.Purchasing
 
             public void AddListener(IAPListener listener)
             {
-                if (m_Listener != null)
-                    Debug.LogWarning(
-                        "There is more than one active IAPListener. Only the most recent IAPListener will receive purchase events.");
-                m_Listener = listener;
+                activeListeners.Add (listener);
             }
 
             public void RemoveListener(IAPListener listener)
             {
-                if (m_Listener == listener)
-                    m_Listener = null;
+                activeListeners.Remove (listener);
             }
 
             public void InitiatePurchase(string productID)
@@ -323,48 +319,80 @@ namespace UnityEngine.Purchasing
 
             public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs e)
             {
-                foreach (var button in activeButtons)
+                PurchaseProcessingResult result;
+
+                // if any receiver consumed this purchase we return the status
+                bool consumePurchase = false;
+                bool resultProcessed = false;
+
+                foreach (IAPButton button in activeButtons)
                 {
                     if (button.productId == e.purchasedProduct.definition.id)
                     {
-                        return button.ProcessPurchase(e);
+                        result = button.ProcessPurchase(e);
+
+                        if (result == PurchaseProcessingResult.Complete) {
+
+                            consumePurchase = true;
+                        }
+                        
+                        resultProcessed = true;
                     }
                 }
 
-                if (m_Listener != null)
+                foreach (IAPListener listener in activeListeners)
                 {
-                    return m_Listener.ProcessPurchase(e);
+                    result = listener.ProcessPurchase(e);
+
+                    if (result == PurchaseProcessingResult.Complete) {
+
+                        consumePurchase = true;
+                    }
+
+                    resultProcessed = true;
                 }
-                else
-                {
+
+                // we expect at least one receiver to get this message
+                if (!resultProcessed) {
+
                     Debug.LogWarning("Purchase not correctly processed for product \"" +
-                                     e.purchasedProduct.definition.id +
-                                     "\". Add an active IAPButton to process this purchase, or add an IAPListener to receive any unhandled purchase events.");
-                    return PurchaseProcessingResult.Pending;
+                        e.purchasedProduct.definition.id +
+                        "\". Add an active IAPButton to process this purchase, or add an IAPListener to receive any unhandled purchase events.");
+            
                 }
+
+                return (consumePurchase) ? PurchaseProcessingResult.Complete : PurchaseProcessingResult.Pending;
             }
 
             public void OnPurchaseFailed(Product product, PurchaseFailureReason reason)
             {
-                foreach (var button in activeButtons)
+                bool resultProcessed = false;
+
+                foreach (IAPButton button in activeButtons)
                 {
                     if (button.productId == product.definition.id)
                     {
-                        button.OnPurchaseFailed(product, reason);
-                        return;
+                        button.OnPurchaseFailed(product, reason); 
+
+                        resultProcessed = true;
                     }
                 }
 
-                if (m_Listener != null)
+                foreach (IAPListener listener in activeListeners)
                 {
-                    m_Listener.OnPurchaseFailed(product, reason);
-                    return;
+                    listener.OnPurchaseFailed(product, reason);
+
+                    resultProcessed = true;
                 }
-                else
-                {
-                    Debug.LogWarning("Failed purchase not correctly handled for product \"" + product.definition.id +
-                                     "\". Add an active IAPButton to handle this failure, or add an IAPListener to receive any unhandled purchase failures.");
+
+                // we expect at least one receiver to get this message
+                if (resultProcessed) {
+                    
+                    Debug.LogWarning ("Failed purchase not correctly handled for product \"" + product.definition.id +
+                    "\". Add an active IAPButton to handle this failure, or add an IAPListener to receive any unhandled purchase failures.");
                 }
+                    
+                return;
             }
         }
     }

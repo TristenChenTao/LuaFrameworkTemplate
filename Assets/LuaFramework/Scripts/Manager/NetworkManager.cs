@@ -63,22 +63,26 @@ namespace LuaFramework {
         /// <summary>
         /// ������������
         /// </summary>
-        public void SendConnect() {
-            SocketClient.SendConnect();
-        }
-        
-        /// <summary>
-        /// 关掉socket
-        /// </summary>
-        public void CloseConnect() {
-            SocketClient.Close();
+        public void SendConnect(string SocketAddress,int SocketPort) {
+            SocketClient.SendConnect(SocketAddress,SocketPort,1);
         }
 
         /// <summary>
         /// ����SOCKET��Ϣ
         /// </summary>
         public void SendMessage(String str) {
+            // if(!str.Contains("Heart")) {
+                Debug.Log(DateTime.Now.Second +"发送客户端命令"+str);
+            // }
             SocketClient.SendMessage(str);
+        }
+
+        /// <summary>
+        /// 关掉socket
+        /// </summary>
+        public void CloseConnect() {
+            Debug.Log("关掉socket关掉socket关掉socket关掉socket");
+            SocketClient.Close();
         }
 
         /// <summary>

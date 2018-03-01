@@ -44,11 +44,24 @@ namespace LuaFramework {
         }
 
         /// <summary>
+        /// 网络管理器
+        /// </summary>
+        public static NetworkManager2 GetNetManager2() {
+            return AppFacade.Instance.GetManager<NetworkManager2>(ManagerName.Network2);
+        }
+
+        /// <summary>
         /// 音乐管理器
         /// </summary>
         public static SoundManager GetSoundManager() {
             return AppFacade.Instance.GetManager<SoundManager>(ManagerName.Sound);
         }
+        // /// <summary>
+        // /// 声网管理器
+        // /// </summary>
+        // public static AgoraManger GetAgoraManger() {
+        //     return AppFacade.Instance.GetManager<AgoraManger>(ManagerName.AgoraManger);
+        // }
 
 
         /// <summary>

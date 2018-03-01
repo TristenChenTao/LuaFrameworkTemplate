@@ -53,11 +53,13 @@ resMgr = LuaHelper.GetResManager();
 panelMgr = LuaHelper.GetPanelManager();
 soundMgr = LuaHelper.GetSoundManager();
 networkMgr = LuaHelper.GetNetManager();
+networkMgr2 = LuaHelper.GetNetManager2()
 
-WWW = UnityEngine.WWW;
-GameObject = UnityEngine.GameObject;
-
-WWWForm = UnityEngine.WWWForm;
+WWW = UnityEngine.WWW
+WWWForm = UnityEngine.WWWForm
+GameObject = UnityEngine.GameObject
+Application = UnityEngine.Application
+SystemInfo = UnityEngine.SystemInfo
 PlayerPrefs = UnityEngine.PlayerPrefs;
 ShareContent = cn.sharesdk.unity3d.ShareContent;
 ContentType = cn.sharesdk.unity3d.ContentType;
@@ -87,8 +89,8 @@ HTTPRequestType = {
 }
 
 HTTPResponseState = {
-	Sucess = 1,
-	Fail = 0
+    Success = 1,
+    Fail = 0
 }
 
 HTTPRelativeURL = {

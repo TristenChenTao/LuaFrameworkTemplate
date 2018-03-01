@@ -19,15 +19,36 @@ public class SocketClient {
     private MemoryStream memStream;
     private BinaryReader reader;
 
+    public static System.Object clock_object = new System.Object ();
+
     private const int MAX_READ = 8192;
     private byte[] byteBuffer = new byte[MAX_READ];
     public static bool loggedIn = false;
 
     private Thread _heartThread;
     private Thread _receiveHeartThread;
+
+    private Thread _checkReachableThread;
     private DateTime lastReceiveHeartMillisecond;
+
+    private NetworkReachability _Reachability = Application.internetReachability;
+
+    private int CheckReachabilityTime = 5000;
+
+    //用来标记发起连接的时候是否还保持连着
+    private bool connectedBeforeReset = false;
+
+    private int ReverConnectCount = 0; //重连次数
+    //正在连接socket
+    private bool onConnection = false;
+
+    private string SocketAddress = "";
+    private int SocketPort = 0;
+
+    private int _networkManagerType = 0;
+    
     // Use this for initialization
-    public SocketClient () { 
+    public SocketClient () {
 
     }
 
@@ -37,26 +58,37 @@ public class SocketClient {
     public void OnRegister () {
         memStream = new MemoryStream ();
         reader = new BinaryReader (memStream);
+        _checkReachableThread = new Thread (CheckReachable);
+        _checkReachableThread.Start ();
     }
 
     /// <summary>
     /// 移除代理
     /// </summary>
     public void OnRemove () {
+        Debug.Log ("移除代理移除代理移除代理移除代理111");
         this.Close ();
         reader.Close ();
         memStream.Close ();
+        _checkReachableThread.Abort ();
     }
 
     /// <summary>
     /// 连接服务器
     /// </summary>
     void ConnectServer (string host, int port) {
+
         client = null;
-        PingTool.StartPing (host, (pingTime) => {
-            NetworkManager.AddEvent (Protocal.PingTime, "" + pingTime);
+
+        Loom.QueueOnMainThread (() => {
+            PingTool.StartPing (host, (pingTime) => {
+                AddEvent (Protocal.PingTime, "" + pingTime);
+            });
+
         });
-        Debug.Log ("ConnectServer 连接服务器");
+
+        AddEvent (Protocal.ClientLog,host+":"+port + " 开始 ConnectServer 连接服务器");
+        Debug.LogWarning ("ConnectServer 连接服务器");
         try {
             IPAddress[] address = Dns.GetHostAddresses (host);
             if (address.Length == 0) {
@@ -65,8 +97,7 @@ public class SocketClient {
             }
             if (address[0].AddressFamily == AddressFamily.InterNetworkV6) {
                 client = new TcpClient (AddressFamily.InterNetworkV6);
-            } 
-            else {
+            } else {
                 client = new TcpClient (AddressFamily.InterNetwork);
             }
             client.SendTimeout = 1000;
@@ -74,6 +105,8 @@ public class SocketClient {
             client.NoDelay = true;
             client.BeginConnect (host, port, new AsyncCallback (OnConnect), null);
         } catch (Exception e) {
+            Debug.Log ("连接服务器连接服务器连接服务器连接服务器 1");
+            AddEvent (Protocal.ClientLog, "连接服务器 失败" + e);
             CloseSocketConnect ();
             Debug.LogError (e.Message);
         }
@@ -86,21 +119,37 @@ public class SocketClient {
         client.EndConnect (asr);
 
         if (client.Connected) {
+            ReverConnectCount = 0;
+            onConnection = false;
+            lastReceiveHeartMillisecond = DateTime.Now;
             CloseHeartThread ();
             CloseReceiveHeart ();
+            AddEvent (Protocal.ClientLog, "发起连接成功");
+            outStream = client.GetStream ();
+            client.GetStream ().BeginRead (byteBuffer, 0, MAX_READ, new AsyncCallback (OnRead), null);
+            // AddEvent(Protocal.Connect, new ByteBuffer());
+
             _heartThread = new Thread (SendHeart);
             _heartThread.Start ();
             _receiveHeartThread = new Thread (ReceiveHeart);
             _receiveHeartThread.Start ();
 
-            outStream = client.GetStream ();
-            client.GetStream ().BeginRead (byteBuffer, 0, MAX_READ, new AsyncCallback (OnRead), null);
-            // NetworkManager.AddEvent(Protocal.Connect, new ByteBuffer());
-
-            NetworkManager.AddEvent (Protocal.Connect, "");
+            AddEvent (Protocal.Connect, "");
         } else {
+            RecoverConnect ();
             Debug.Log ("<><><>> 发起连接失败 连接失败");
-            NetworkManager.AddEvent (Protocal.Disconnect, "发起连接失败 连接失败");
+            AddEvent (Protocal.ClientLog, "发起连接失败 连接失败");
+
+            AddEvent (Protocal.Disconnect, "发起连接失败 连接失败");
+        }
+    }
+
+    void AddEvent(int protocal, string message) {
+        if(_networkManagerType == 1) {
+            NetworkManager.AddEvent (protocal, message);
+        }
+        else if(_networkManagerType == 2) {
+            NetworkManager2.AddEvent (protocal, message);
         }
     }
 
@@ -124,6 +173,7 @@ public class SocketClient {
                 byte[] payload = ms.ToArray ();
                 outStream.BeginWrite (payload, 0, payload.Length, new AsyncCallback (OnWrite), null);
             } else {
+                AddEvent (Protocal.ShowPopMessage, "写数据 socket的连接断开了");
                 Debug.LogWarning ("client.connected----->>false");
             }
         }
@@ -134,27 +184,37 @@ public class SocketClient {
     /// </summary>
     void OnRead (IAsyncResult asr) {
         if (client.Connected == false) {
+            AddEvent (Protocal.ShowPopMessage, "读取消息 socket的连接断开了");
             Debug.LogWarning ("client.connected----->>false");
             return;
         }
         int bytesRead = 0;
         try {
-            lock (client.GetStream ()) { //读取字节流到缓冲区
+            lock (clock_object) { //读取字节流到缓冲区
+                client.GetStream ();
                 bytesRead = client.GetStream ().EndRead (asr);
             }
             if (bytesRead < 1) { //包尺寸有问题，断线处理
-                OnDisconnected (DisType.Disconnect, "bytesRead < 1");
+                Debug.Log ("//包尺寸有问题，断线处理");
+                // OnDisconnected (DisType.Disconnect, "bytesRead < 1");
+                // AddEvent (Protocal.ClientLog, "关掉客户端链接 //包尺寸有问题，断线处理 \"bytesRead < 1\"");
                 return;
             }
             OnReceive (byteBuffer, bytesRead); //分析数据包内容，抛给逻辑层
-            lock (client.GetStream ()) { //分析完，再次监听服务器发过来的新消息
+            lock (clock_object) { //分析完，再次监听服务器发过来的新消息
+                client.GetStream ();
                 Array.Clear (byteBuffer, 0, byteBuffer.Length); //清空数组
                 client.GetStream ().BeginRead (byteBuffer, 0, MAX_READ, new AsyncCallback (OnRead), null);
             }
+        } catch (ObjectDisposedException ex) {
+
         } catch (Exception ex) {
             //PrintBytes();
-            Debug.Log (ex.Message);
+            Debug.Log (ex);
+            Debug.Log (asr);
+            AddEvent (Protocal.ClientLog, "关掉客户端链接 读取消息错误：" + ex.Message);
             OnDisconnected (DisType.Exception, ex.Message);
+            RecoverConnect ();
         }
     }
 
@@ -162,14 +222,13 @@ public class SocketClient {
     /// 丢失链接
     /// </summary>
     void OnDisconnected (DisType dis, string msg) {
-        CloseSocketConnect (); //关掉客户端链接
         int protocal = dis == DisType.Exception ?
             Protocal.Exception : Protocal.Disconnect;
 
         // ByteBuffer buffer = new ByteBuffer();
         // buffer.WriteShort((ushort)protocal);
-        // NetworkManager.AddEvent(protocal, buffer);
-        NetworkManager.AddEvent (protocal, "");
+        // AddEvent(protocal, buffer);
+        AddEvent (protocal, "");
         Debug.LogWarning ("Connection was closed by the server:>" + msg + " Distype:>" + dis);
     }
 
@@ -193,6 +252,7 @@ public class SocketClient {
         try {
             outStream.EndWrite (r);
         } catch (Exception ex) {
+            AddEvent (Protocal.ShowPopMessage, "向链接写入数据流 失败" + ex.Message);
             Debug.LogError ("OnWrite--->>>" + ex.Message);
         }
     }
@@ -252,17 +312,18 @@ public class SocketClient {
         var messageString = System.Text.Encoding.UTF8.GetString (message);
 
         if (!messageString.Contains ("s_heart")) {
-            Debug.Log ("服务端发送命令：" + messageString);
+            AddEvent (Protocal.ClientLog, "收到服务端消息");
         } else {
-            lastReceiveHeartMillisecond = DateTime.Now;
+            connectedBeforeReset = true;
+            // lastReceiveHeartMillisecond = DateTime.Now;
         }
-
+        lastReceiveHeartMillisecond = DateTime.Now;
         //协议体修正(协议：[消息长度4字节][消息内容])
         //取消协议字段
         // int mainId = buffer.ReadShort();
-        // NetworkManager.AddEvent(mainId, buffer);
+        // AddEvent(mainId, buffer);
 
-        NetworkManager.AddEvent (Protocal.Message, messageString);
+        AddEvent (Protocal.Message, messageString);
     }
 
     /// <summary>
@@ -276,6 +337,8 @@ public class SocketClient {
     /// 关闭链接、心跳
     /// </summary>
     public void Close () {
+        Debug.Log ("关闭链接、心跳关闭链接、心跳");
+        AddEvent (Protocal.ClientLog, "关闭链接、心跳关闭链接、心跳");
         CloseHeartThread ();
         CloseSocketConnect ();
         CloseReceiveHeart ();
@@ -286,6 +349,7 @@ public class SocketClient {
     /// </summary>
     void CloseSocketConnect () {
         if (client != null) {
+            Debug.Log ("关闭Socket链接");
             if (client.Connected) client.Close ();
             client = null;
         }
@@ -315,8 +379,11 @@ public class SocketClient {
     /// <summary>
     /// 发送连接请求
     /// </summary>
-    public void SendConnect () {
-        ConnectServer (AppConst.SocketAddress, AppConst.SocketPort);
+    public void SendConnect (string SocketAddress,int SocketPort,int type) {
+        this._networkManagerType = type;
+        this.SocketAddress = SocketAddress;
+        this.SocketPort = SocketPort;
+        ConnectServer (SocketAddress, SocketPort);
     }
 
     /// <summary>
@@ -328,6 +395,63 @@ public class SocketClient {
         // buffer.Close();
     }
 
+    ///<summary>
+    ///重连
+    ///<summary>
+    public void RecoverConnect () {
+        if (onConnection) {
+            Debug.Log("正在尝试重连中 不需要发起新的重连");
+            AddEvent (Protocal.ClientLog, "正在尝试重连中 不需要发起新的重连");
+            return;
+        }
+
+        if (client != null && client.Connected) {
+            Debug.Log("判断还连接着，发送心跳进行测试");
+            System.Timers.Timer checkConnectTimer = new System.Timers.Timer ();
+            checkConnectTimer.Interval = 1000;
+            connectedBeforeReset = false;
+            SendMessage ("Heart");
+            checkConnectTimer.Elapsed += delegate { 
+                if (connectedBeforeReset == false) {
+                    Debug.Log("connectedBeforeReset==false，开始进行重连");
+                    onConnection = true;
+                    Close ();
+                    ConnectServer (this.SocketAddress, this.SocketPort);
+                    RecoverNextConnect ();
+                    connectedBeforeReset = false;
+                }else{
+                    Debug.Log("connectedBeforeReset==true");
+                }
+                    checkConnectTimer.Stop ();
+            };
+            checkConnectTimer.Start ();
+        } else {
+            Debug.Log("判断已经，发送心跳进行测试");
+            onConnection = true;
+            ConnectServer (this.SocketAddress, this.SocketPort);
+            RecoverNextConnect ();
+        }
+    }
+
+    /// <summary>
+    /// 判断是否发起下一次重连
+    /// </summary>  
+    private void RecoverNextConnect () {
+        ReverConnectCount += 1;
+        AddEvent (Protocal.ReverConnectCount, "" + ReverConnectCount);
+        System.Timers.Timer sendConnectTimer = new System.Timers.Timer ();
+        sendConnectTimer.Interval = 3000;
+        sendConnectTimer.Elapsed += delegate {
+            if (onConnection) {
+                onConnection = false;
+                RecoverConnect ();
+            }
+
+            sendConnectTimer.Stop ();
+        };
+
+        sendConnectTimer.Start ();
+    }
     /// <summary>
     ///检测服务端心跳包
     /// </summary>  
@@ -338,19 +462,37 @@ public class SocketClient {
                 if (lastReceiveHeartMillisecond != null && DateTime.Now.Subtract (lastReceiveHeartMillisecond).TotalSeconds > 7) {
                     Debug.Log ("secondTimer_Elapsed   = " + DateTime.Now.Subtract (lastReceiveHeartMillisecond).TotalSeconds);
                     string info = "didDisconnect 当前时间超过上一次收到心跳时间判断为断掉连接";
+                    AddEvent (Protocal.ClientLog, info);
+                    AddEvent (Protocal.ClientLog, "secondTimer_Elapsed   = " + DateTime.Now.Subtract (lastReceiveHeartMillisecond).TotalSeconds);
                     Debug.Log (info);
-                    CloseHeartThread ();
-                    CloseSocketConnect ();
-                    NetworkManager.AddEvent (Protocal.Disconnect, "服务器断开连接");
+                    RecoverConnect ();
+                    AddEvent (Protocal.Disconnect, "服务器断开连接");
                 }
 
             } catch (ThreadAbortException e) {
                 Debug.Log ("SendHeart Thread Abort Exception message =" + e);
             } catch (Exception e) {
                 Debug.Log (e);
-                Debug.Log ("Couldn't catch the Thread Exception");
+                Debug.Log ("ReceiveHeart Couldn't catch the Thread Exception");
             }
         }
+    }
+
+    /// <summary>
+    ///网络状态监测
+    /// </summary>  
+    private void CheckReachable () {
+        Thread.Sleep (CheckReachabilityTime);
+
+        Loom.QueueOnMainThread (() => {
+            if (Application.internetReachability != UnityEngine.NetworkReachability.NotReachable &&
+                Application.internetReachability != _Reachability) {
+                _Reachability = Application.internetReachability;
+
+                RecoverConnect ();
+
+            }
+        });
     }
 
     /// <summary>
@@ -363,14 +505,13 @@ public class SocketClient {
         }
         while (true) {
             try {
-                Debug.Log ("客户端发送心跳");
                 SendMessage ("heart");
                 Thread.Sleep (AppConst.heartInterval);
             } catch (ThreadAbortException e) {
                 Debug.Log ("SendHeart Thread Abort Exception message =" + e);
             } catch (Exception e) {
                 Debug.Log (e);
-                Debug.Log ("Couldn't catch the Thread Exception");
+                Debug.Log ("SendHeart Couldn't catch the Thread Exception");
             }
         }
     }

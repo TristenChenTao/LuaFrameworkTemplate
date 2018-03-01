@@ -7,6 +7,7 @@
     <component id="ytwi3" name="主页进入.xml" path="/" exported="true"/>
     <image id="wnyv4" name="启动页资源.png" path="/Resource/" exported="true"/>
     <component id="ipb05" name="picture.xml" path="/"/>
+    <component id="m8j26" name="AppViewBg.xml" path="/" exported="true"/>
   </resources>
-  <publish name="login" path="D:\Documents\LuaFrameworkTemplate\Assets\Resources\UI"/>
+  <publish name="login" path="/Users/macpro/QIPAI/LuaFrameworkTemplate/Assets/Resources/UI"/>
 </packageDescription>

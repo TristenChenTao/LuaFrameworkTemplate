@@ -11,16 +11,23 @@ public static class LuaBinder
 		L.BeginModule(null);
 		LuaInterface_DebuggerWrap.Register(L);
 		TweenUtilsWrap.Register(L);
+		TakeScreenshotWrap.Register(L);
 		LuaDebugToolWrap.Register(L);
 		LuaValueInfoWrap.Register(L);
 		ExUIPackageWrap.Register(L);
+		PingToolWrap.Register(L);
 		ThirdPlatformToolWrap.Register(L);
+		SocketSecretWrap.Register(L);
 		HTTPClientWrap.Register(L);
-		PayManagerWrap.Register(L);
+		MessageQueueWrap.Register(L);
+		CustomCSharpMethodWrap.Register(L);
+		TimerCountDownWrap.Register(L);
 		ViewWrap.Register(L);
 		BaseWrap.Register(L);
 		ManagerWrap.Register(L);
 		L.BeginModule("UnityEngine");
+		UnityEngine_SystemInfoWrap.Register(L);
+		UnityEngine_NetworkReachabilityWrap.Register(L);
 		UnityEngine_ComponentWrap.Register(L);
 		UnityEngine_TransformWrap.Register(L);
 		UnityEngine_MaterialWrap.Register(L);
@@ -90,22 +97,8 @@ public static class LuaBinder
 		L.RegFunction("ReapplyDrivenProperties", UnityEngine_RectTransform_ReapplyDrivenProperties);
 		L.EndModule();
 		L.EndModule();
-		L.BeginModule("LuaFramework");
-		LuaFramework_UtilWrap.Register(L);
-		LuaFramework_AppConstWrap.Register(L);
-		LuaFramework_LuaHelperWrap.Register(L);
-		LuaFramework_ByteBufferWrap.Register(L);
-		LuaFramework_LuaBehaviourWrap.Register(L);
-		LuaFramework_GameManagerWrap.Register(L);
-		LuaFramework_LuaManagerWrap.Register(L);
-		LuaFramework_PanelManagerWrap.Register(L);
-		LuaFramework_SoundManagerWrap.Register(L);
-		LuaFramework_TimerManagerWrap.Register(L);
-		LuaFramework_ThreadManagerWrap.Register(L);
-		LuaFramework_NetworkManagerWrap.Register(L);
-		LuaFramework_ResourceManagerWrap.Register(L);
-		L.EndModule();
 		L.BeginModule("FairyGUI");
+		FairyGUI_UIContentScalerWrap.Register(L);
 		FairyGUI_EventContextWrap.Register(L);
 		FairyGUI_EventDispatcherWrap.Register(L);
 		FairyGUI_EventListenerWrap.Register(L);
@@ -142,6 +135,7 @@ public static class LuaBinder
 		FairyGUI_RelationsWrap.Register(L);
 		FairyGUI_RelationTypeWrap.Register(L);
 		FairyGUI_TimersWrap.Register(L);
+		FairyGUI_DragDropManagerWrap.Register(L);
 		FairyGUI_LuaUIHelperWrap.Register(L);
 		FairyGUI_GLuaComponentWrap.Register(L);
 		FairyGUI_GLuaLabelWrap.Register(L);
@@ -158,6 +152,9 @@ public static class LuaBinder
 		L.RegFunction("PlayCompleteCallback", FairyGUI_PlayCompleteCallback);
 		L.RegFunction("TransitionHook", FairyGUI_TransitionHook);
 		L.RegFunction("TimerCallback", FairyGUI_TimerCallback);
+		L.BeginModule("UIContentScaler");
+		FairyGUI_UIContentScaler_ScreenMatchModeWrap.Register(L);
+		L.EndModule();
 		L.BeginModule("UIPackage");
 		L.RegFunction("LoadResource", FairyGUI_UIPackage_LoadResource);
 		L.RegFunction("CreateObjectCallback", FairyGUI_UIPackage_CreateObjectCallback);
@@ -165,6 +162,22 @@ public static class LuaBinder
 		L.BeginModule("GObjectPool");
 		L.RegFunction("InitCallbackDelegate", FairyGUI_GObjectPool_InitCallbackDelegate);
 		L.EndModule();
+		L.EndModule();
+		L.BeginModule("LuaFramework");
+		LuaFramework_UtilWrap.Register(L);
+		LuaFramework_AppConstWrap.Register(L);
+		LuaFramework_LuaHelperWrap.Register(L);
+		LuaFramework_ByteBufferWrap.Register(L);
+		LuaFramework_LuaBehaviourWrap.Register(L);
+		LuaFramework_GameManagerWrap.Register(L);
+		LuaFramework_LuaManagerWrap.Register(L);
+		LuaFramework_PanelManagerWrap.Register(L);
+		LuaFramework_SoundManagerWrap.Register(L);
+		LuaFramework_TimerManagerWrap.Register(L);
+		LuaFramework_ThreadManagerWrap.Register(L);
+		LuaFramework_NetworkManagerWrap.Register(L);
+		LuaFramework_NetworkManager2Wrap.Register(L);
+		LuaFramework_ResourceManagerWrap.Register(L);
 		L.EndModule();
 		L.BeginModule("cn");
 		L.BeginModule("sharesdk");
@@ -182,8 +195,7 @@ public static class LuaBinder
 		L.RegFunction("Func_int_int", System_Func_int_int);
 		L.RegFunction("Action_UnityEngine_AsyncOperation", System_Action_UnityEngine_AsyncOperation);
 		L.RegFunction("Action_NotiData", System_Action_NotiData);
-		L.RegFunction("Action_UnityEngine_Purchasing_Products", System_Action_UnityEngine_Purchasing_Products);
-		L.RegFunction("Action_string", System_Action_string);
+		L.RegFunction("Action_string_string", System_Action_string_string);
 		L.EndModule();
 		L.EndModule();
 		L.BeginPreLoad();
@@ -879,7 +891,7 @@ public static class LuaBinder
 	}
 
 	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	static int System_Action_UnityEngine_Purchasing_Products(IntPtr L)
+	static int System_Action_string_string(IntPtr L)
 	{
 		try
 		{
@@ -888,40 +900,13 @@ public static class LuaBinder
 
 			if (count == 1)
 			{
-				Delegate arg1 = DelegateTraits<System.Action<UnityEngine.Purchasing.Product[]>>.Create(func);
+				Delegate arg1 = DelegateTraits<System.Action<string,string>>.Create(func);
 				ToLua.Push(L, arg1);
 			}
 			else
 			{
 				LuaTable self = ToLua.CheckLuaTable(L, 2);
-				Delegate arg1 = DelegateTraits<System.Action<UnityEngine.Purchasing.Product[]>>.Create(func, self);
-				ToLua.Push(L, arg1);
-			}
-			return 1;
-		}
-		catch(Exception e)
-		{
-			return LuaDLL.toluaL_exception(L, e);
-		}
-	}
-
-	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	static int System_Action_string(IntPtr L)
-	{
-		try
-		{
-			int count = LuaDLL.lua_gettop(L);
-			LuaFunction func = ToLua.CheckLuaFunction(L, 1);
-
-			if (count == 1)
-			{
-				Delegate arg1 = DelegateTraits<System.Action<string>>.Create(func);
-				ToLua.Push(L, arg1);
-			}
-			else
-			{
-				LuaTable self = ToLua.CheckLuaTable(L, 2);
-				Delegate arg1 = DelegateTraits<System.Action<string>>.Create(func, self);
+				Delegate arg1 = DelegateTraits<System.Action<string,string>>.Create(func, self);
 				ToLua.Push(L, arg1);
 			}
 			return 1;
