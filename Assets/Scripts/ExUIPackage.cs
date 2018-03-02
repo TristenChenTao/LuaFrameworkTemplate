@@ -9,8 +9,7 @@ public class ExUIPackage
 {
     public static void AddPackage(string fileName)
     {
-        if(AppConst.LuaBundleMode)
-        {
+        if(AppConst.LuaBundleMode && AppConst.DebugMode == false)        {
             string url = Util.DataPath + AppConst.UIDir.ToLower() + fileName.ToLower() + AppConst.ExtName; 
             AssetBundle ab = AssetBundle.LoadFromFile(url);
             if (ab)

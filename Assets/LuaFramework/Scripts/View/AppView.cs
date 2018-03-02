@@ -38,7 +38,7 @@ public class AppView : View {
         gameManager  = new GameManager();
 
         GRoot.inst.SetContentScaleFactor (1920, 1080,UIContentScaler.ScreenMatchMode.MatchWidth);
-        UIPackage.AddPackage ("UI/login");
+        UIPackage.AddPackage ("UI/Login");
         view = UIPackage.CreateObject ("login", "AppViewBg").asCom;
         view.SetSize (GRoot.inst.width, GRoot.inst.height);
         view.AddRelation (GRoot.inst, RelationType.Size);

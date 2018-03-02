@@ -29,7 +29,7 @@ namespace LuaFramework {
 
         
         public const bool DebugMode = true;                             //调试模式-用于内部测试
-        public const bool LuaBundleMode = false;                       //Lua代码AssetBundle模式
+        public const bool LuaBundleMode = true;                       //Lua代码AssetBundle模式
         public const bool UpdateMode = false;                           //热更新模式
         public const bool ForceUpdateMode = false;                     //强制更新模式   
         public static string ForceUpdataUrl = URL_Domain+"/Version/VersionUpdate"; //强制更新url地址

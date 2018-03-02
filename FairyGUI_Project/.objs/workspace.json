@@ -1,14 +1,17 @@
 {
-	"hidden_packages": [],
 	"active_doc": [
 		"lb23giok",
-		"ytwi0"
+		"m8j26"
+	],
+	"expanded_nodes": [
+		"lb23giok",
+		"/",
+		"9nmrx4p9",
+		"/"
 	],
 	"docs": [
 		"9nmrx4p9",
 		"mtsq0",
-		"lb23giok",
-		"ytwi0",
 		"lb23giok",
 		"ytwi1",
 		"lb23giok",
@@ -16,12 +19,9 @@
 		"lb23giok",
 		"ytwi2",
 		"lb23giok",
-		"ipb05"
-	],
-	"expanded_nodes": [
+		"ipb05",
 		"lb23giok",
-		"/",
-		"9nmrx4p9",
-		"/"
-	]
+		"m8j26"
+	],
+	"hidden_packages": []
 }
