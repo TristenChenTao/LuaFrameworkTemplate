@@ -22,6 +22,8 @@ function Network2.Start()
     Event.AddListener(Protocal.ClientLog2, this.ClientLog)
     Event.AddListener(Protocal.ShowPopMessage2, this.ShowPopMessage)
     Event.AddListener(Protocal.ReverConnectCount2, this.ReverConnectCount)
+    Event.AddListener(Protocal.NotReachable2, this.NotReachable)
+    Event.AddListener(Protocal.Reachable2, this.Reachable)
 end
 
 --Socket消息--
@@ -120,7 +122,8 @@ function Network2.Unload()
     Event.RemoveListener(Protocal.ClientLog2, this.ClientLog)
     Event.RemoveListener(Protocal.ShowPopMessage2, this.ShowPopMessage)
     Event.RemoveListener(Protocal.ReverConnectCount2, this.ReverConnectCount)
-
+    Event.RemoveListener(Protocal.NotReachable2, this.NotReachable)
+    Event.RemoveListener(Protocal.Reachable2, this.Reachable)
     logWarn('Unload Network...');
 end
 
@@ -152,3 +155,24 @@ function Network2.ShowPopMessage( message)
 function Network2.ReverConnectCount( message)
     print(message)
  end
+
+ --检测到无网络--
+function Network2.NotReachable()
+    ShowNotNetPop()
+    CheckNetState:Add(
+        2,
+        0,
+        function ()
+        if (not (Application.internetReachability == UnityEngine.NetworkReachability.NotReachable) )then
+            HideNotNetPop()
+            CheckNetState = nil
+        end
+    end
+    )
+
+end
+
+--检测到网络--
+function Network2.Reachable()
+    HideNotNetPop()
+end

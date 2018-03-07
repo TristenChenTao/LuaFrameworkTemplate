@@ -22,6 +22,8 @@ function Network.Start()
     Event.AddListener(Protocal.ClientLog, this.ClientLog)
     Event.AddListener(Protocal.ShowPopMessage, this.ShowPopMessage)
     Event.AddListener(Protocal.ReverConnectCount, this.ReverConnectCount)
+    Event.AddListener(Protocal.NotReachable, this.NotReachable)
+    Event.AddListener(Protocal.Reachable, this.Reachable)
 end
 
 --Socket消息--
@@ -99,6 +101,28 @@ function Network.OnDisconnect()
     logWarn("OnDisconnect------->>>>");
 end
 
+local CheckNetState = FairyGUI.Timers.inst
+--检测到无网络--
+function Network.NotReachable()
+    ShowNotNetPop()
+    CheckNetState:Add(
+        2,
+        0,
+        function ()
+        if (not (Application.internetReachability == UnityEngine.NetworkReachability.NotReachable) )then
+            HideNotNetPop()
+            CheckNetState = nil
+        end
+    end
+    )
+
+end
+
+--检测到网络--
+function Network.Reachable()
+    HideNotNetPop()
+end
+
 --ping--
 function Network.OnPing(str)
    	-- logWarn("OnPing------->>>> ping ="..str);
@@ -120,7 +144,8 @@ function Network.Unload()
     Event.RemoveListener(Protocal.ClientLog, this.ClientLog)
     Event.RemoveListener(Protocal.ShowPopMessage, this.ShowPopMessage)
     Event.RemoveListener(Protocal.ReverConnectCount, this.ReverConnectCount)
-
+    Event.RemoveListener(Protocal.NotReachable, this.NotReachable)
+    Event.RemoveListener(Protocal.Reachable, this.Reachable)
     logWarn('Unload Network...');
 end
 

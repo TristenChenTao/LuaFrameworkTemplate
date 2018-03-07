@@ -16,5 +16,7 @@ namespace LuaFramework {
 
          public const int ShowPopMessage  = 108;     //弹窗显示日志信息
          
+         public const int NotReachable  = 109;     //无网络
+        public const int Reachable  = 110;     //有网络
     }
 }

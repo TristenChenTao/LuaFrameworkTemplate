@@ -23,8 +23,10 @@ public class SocketClient {
 
     private const int MAX_READ = 8192;
     private byte[] byteBuffer = new byte[MAX_READ];
-    public static bool loggedIn = false;
+    public bool loggedIn = false;
+    System.Timers.Timer sendConnectTimer; //发起下一次重连的计时器
 
+    System.Timers.Timer checkConnectTimer; //检测socket是否还连着
     private Thread _heartThread;
     private Thread _receiveHeartThread;
 
@@ -46,7 +48,7 @@ public class SocketClient {
     private int SocketPort = 0;
 
     private int _networkManagerType = 0;
-    
+
     // Use this for initialization
     public SocketClient () {
 
@@ -87,7 +89,7 @@ public class SocketClient {
 
         });
 
-        AddEvent (Protocal.ClientLog,host+":"+port + " 开始 ConnectServer 连接服务器");
+        AddEvent (Protocal.ClientLog, host + ":" + port + " 开始 ConnectServer 连接服务器");
         Debug.LogWarning ("ConnectServer 连接服务器");
         try {
             IPAddress[] address = Dns.GetHostAddresses (host);
@@ -144,11 +146,10 @@ public class SocketClient {
         }
     }
 
-    void AddEvent(int protocal, string message) {
-        if(_networkManagerType == 1) {
+    void AddEvent (int protocal, string message) {
+        if (_networkManagerType == 1) {
             NetworkManager.AddEvent (protocal, message);
-        }
-        else if(_networkManagerType == 2) {
+        } else if (_networkManagerType == 2) {
             NetworkManager2.AddEvent (protocal, message);
         }
     }
@@ -312,7 +313,7 @@ public class SocketClient {
         var messageString = System.Text.Encoding.UTF8.GetString (message);
 
         if (!messageString.Contains ("s_heart")) {
-            AddEvent (Protocal.ClientLog, "收到服务端消息");
+            // AddEvent (Protocal.ClientLog, "收到服务端消息");
         } else {
             connectedBeforeReset = true;
             // lastReceiveHeartMillisecond = DateTime.Now;
@@ -339,9 +340,21 @@ public class SocketClient {
     public void Close () {
         Debug.Log ("关闭链接、心跳关闭链接、心跳");
         AddEvent (Protocal.ClientLog, "关闭链接、心跳关闭链接、心跳");
+
+        loggedIn = false;
+
         CloseHeartThread ();
         CloseSocketConnect ();
         CloseReceiveHeart ();
+        if (sendConnectTimer != null) {
+            sendConnectTimer.Stop ();
+            sendConnectTimer = null;
+        }
+
+        if (checkConnectTimer != null) {
+            checkConnectTimer.Stop ();
+            checkConnectTimer = null;
+        }
     }
 
     /// <summary>
@@ -353,7 +366,6 @@ public class SocketClient {
             if (client.Connected) client.Close ();
             client = null;
         }
-        loggedIn = false;
     }
 
     /// <summary>
@@ -379,11 +391,12 @@ public class SocketClient {
     /// <summary>
     /// 发送连接请求
     /// </summary>
-    public void SendConnect (string SocketAddress,int SocketPort,int type) {
+    public void SendConnect (string SocketAddress, int SocketPort, int type) {
         this._networkManagerType = type;
         this.SocketAddress = SocketAddress;
         this.SocketPort = SocketPort;
         ConnectServer (SocketAddress, SocketPort);
+        loggedIn = true;
     }
 
     /// <summary>
@@ -399,58 +412,99 @@ public class SocketClient {
     ///重连
     ///<summary>
     public void RecoverConnect () {
-        if (onConnection) {
-            Debug.Log("正在尝试重连中 不需要发起新的重连");
-            AddEvent (Protocal.ClientLog, "正在尝试重连中 不需要发起新的重连");
-            return;
+        lock (clock_object) {
+            if(loggedIn == false) {
+                return;
+            }
+
+            Loom.QueueOnMainThread (() => {
+                if (Application.internetReachability == UnityEngine.NetworkReachability.NotReachable) {
+                    Debug.Log ("网络已断开，请检查网络");
+                    AddEvent (Protocal.NotReachable, "网络已断开，请检查网络");
+                } else {
+                    AddEvent (Protocal.Reachable, "有网络");
+                    if (onConnection) {
+                        Debug.Log ("正在尝试重连中 不需要发起新的重连");
+                        AddEvent (Protocal.ClientLog, "正在尝试重连中 不需要发起新的重连");
+                        return;
+                    }
+
+                    if (client != null && client.Connected) {
+                        Debug.Log ("判断还连接着，发送心跳进行测试");
+                        if (checkConnectTimer != null) {
+                            checkConnectTimer.Stop ();
+                            checkConnectTimer = null;
+                        }
+
+                        checkConnectTimer = new System.Timers.Timer ();
+                        checkConnectTimer.Interval = 1000;
+                        connectedBeforeReset = false;
+                        SendMessage ("Heart");
+                        checkConnectTimer.Elapsed += delegate {
+                            if (connectedBeforeReset == false) {
+                                Debug.Log ("connectedBeforeReset==false，开始进行重连");
+                                onConnection = true;
+                                Close ();
+                                ConnectServer (this.SocketAddress, this.SocketPort);
+                                RecoverNextConnect ();
+                                connectedBeforeReset = false;
+                            } else {
+                                Debug.Log ("connectedBeforeReset==true");
+                            }
+                            checkConnectTimer.Stop ();
+                        };
+                        checkConnectTimer.Start ();
+                    } else {
+                        Debug.Log ("判断已经，发送心跳进行测试");
+                        onConnection = true;
+                        ConnectServer (this.SocketAddress, this.SocketPort);
+                        RecoverNextConnect ();
+                    }
+                }
+
+            });
         }
 
-        if (client != null && client.Connected) {
-            Debug.Log("判断还连接着，发送心跳进行测试");
-            System.Timers.Timer checkConnectTimer = new System.Timers.Timer ();
-            checkConnectTimer.Interval = 1000;
-            connectedBeforeReset = false;
-            SendMessage ("Heart");
-            checkConnectTimer.Elapsed += delegate { 
-                if (connectedBeforeReset == false) {
-                    Debug.Log("connectedBeforeReset==false，开始进行重连");
-                    onConnection = true;
-                    Close ();
-                    ConnectServer (this.SocketAddress, this.SocketPort);
-                    RecoverNextConnect ();
-                    connectedBeforeReset = false;
-                }else{
-                    Debug.Log("connectedBeforeReset==true");
-                }
-                    checkConnectTimer.Stop ();
-            };
-            checkConnectTimer.Start ();
-        } else {
-            Debug.Log("判断已经，发送心跳进行测试");
-            onConnection = true;
-            ConnectServer (this.SocketAddress, this.SocketPort);
-            RecoverNextConnect ();
-        }
     }
 
     /// <summary>
     /// 判断是否发起下一次重连
     /// </summary>  
     private void RecoverNextConnect () {
-        ReverConnectCount += 1;
-        AddEvent (Protocal.ReverConnectCount, "" + ReverConnectCount);
-        System.Timers.Timer sendConnectTimer = new System.Timers.Timer ();
-        sendConnectTimer.Interval = 3000;
-        sendConnectTimer.Elapsed += delegate {
-            if (onConnection) {
-                onConnection = false;
-                RecoverConnect ();
-            }
+        lock (clock_object) {
+            Loom.QueueOnMainThread (() => {
+                if (Application.internetReachability == UnityEngine.NetworkReachability.NotReachable) {
+                    Debug.Log ("网络已断开，请检查网络");
+                    AddEvent (Protocal.NotReachable, "网络已断开，请检查网络");
+                       if (sendConnectTimer != null) {
+                        sendConnectTimer.Stop ();
+                        sendConnectTimer = null;
+                    }
+                } else {
+                    AddEvent (Protocal.Reachable, "有网络");
+                    ReverConnectCount += 1;
+                    AddEvent (Protocal.ReverConnectCount, "" + ReverConnectCount);
+                    if (sendConnectTimer != null) {
+                        sendConnectTimer.Stop ();
+                        sendConnectTimer = null;
+                    }
 
-            sendConnectTimer.Stop ();
-        };
+                    sendConnectTimer = new System.Timers.Timer ();
+                    sendConnectTimer.Interval = 3000;
+                    sendConnectTimer.Elapsed += delegate {
+                        if (onConnection) {
+                            onConnection = false;
+                            RecoverConnect ();
+                        }
 
-        sendConnectTimer.Start ();
+                        sendConnectTimer.Stop ();
+                    };
+
+                    sendConnectTimer.Start ();
+                }
+            });
+        }
+
     }
     /// <summary>
     ///检测服务端心跳包
@@ -485,12 +539,10 @@ public class SocketClient {
         Thread.Sleep (CheckReachabilityTime);
 
         Loom.QueueOnMainThread (() => {
-            if (Application.internetReachability != UnityEngine.NetworkReachability.NotReachable &&
+            if (
                 Application.internetReachability != _Reachability) {
                 _Reachability = Application.internetReachability;
-
                 RecoverConnect ();
-
             }
         });
     }

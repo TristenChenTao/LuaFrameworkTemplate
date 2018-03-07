@@ -8,6 +8,8 @@ Protocal = {
 	ClientLog    = '106';     --客户端日志
 	ReverConnectCount  = '107';     --重连次数
 	ShowPopMessage  = '108';     --弹窗显示日志信息
+	NotReachable = "109";--无网络
+	Reachable = "110";--有网络
 	Connect2		= '1010';	--连接服务器
 	Exception2   = '1020';	--异常掉线
 	Disconnect2  = '1030';	--正常断线   
@@ -16,6 +18,8 @@ Protocal = {
 	ClientLog2    = '1060';     --客户端日志
 	ReverConnectCount2  = '1070';     --重连次数
 	ShowPopMessage2  = '1080';     --弹窗显示日志信息
+	NotReachable2 = "1090";--无网络
+	Reachable2 = "1100";--有网络
 }
 
 
