@@ -31,24 +31,63 @@ public class Packager {
     }
 
     [MenuItem("LuaFramework/Build iPhone Resource", false, 100)]
-    public static void BuildiPhoneResource() {
+    public static void BuildiPhoneResource()
+    {
         BuildTarget target;
+#if DES
+        if (EditorUtility.DisplayDialog("Tips", "当前使用DES加密预编译,打包平台IOS，请确认AppConst文件中已经有合适的LuaDESKey，并且已经开启了LuaByteMode", "继续", "取消"))
+        {
 #if UNITY_5
-        target = BuildTarget.iOS;
+            target = BuildTarget.iOS;
 #else
         target = BuildTarget.iOS;
 #endif
-        BuildAssetResource(target);
+            BuildAssetResource(target);
+        }
+#else
+
+#if UNITY_5
+        target = BuildTarget.iOS;
+#else
+        target = BuildTarget.iPhone;
+#endif
+        if (EditorUtility.DisplayDialog("Tips", "当前打包平台IOS", "继续", "取消"))
+        {
+            BuildAssetResource(target);
+        }
+#endif
     }
 
     [MenuItem("LuaFramework/Build Android Resource", false, 101)]
-    public static void BuildAndroidResource() {
-        BuildAssetResource(BuildTarget.Android);
+    public static void BuildAndroidResource()
+    {
+#if DES
+        if (EditorUtility.DisplayDialog("Tips", "当前使用DES加密预编译,打包平台Android，请确认AppConst文件中已经有合适的LuaDESKey，并且已经开启了LuaByteMode", "继续", "取消"))
+        {
+            BuildAssetResource(BuildTarget.Android);
+        }
+#else
+        if (EditorUtility.DisplayDialog("Tips", "当前打包平台Android", "继续", "取消"))
+        {
+            BuildAssetResource(BuildTarget.Android);
+        }
+#endif
     }
 
     [MenuItem("LuaFramework/Build Windows Resource", false, 102)]
-    public static void BuildWindowsResource() {
-        BuildAssetResource(BuildTarget.StandaloneWindows);
+    public static void BuildWindowsResource()
+    {
+#if DES
+        if (EditorUtility.DisplayDialog("Tips", "当前使用DES加密预编译,打包平台PC，请确认AppConst文件中已经有合适的LuaDESKey，并且已经开启了LuaByteMode", "继续", "取消"))
+        {
+            BuildAssetResource(BuildTarget.StandaloneWindows);
+        }
+#else
+        if (EditorUtility.DisplayDialog("Tips", "当前打包平台Android", "继续", "取消"))
+        {
+            BuildAssetResource(BuildTarget.StandaloneWindows);
+        }
+#endif
     }
 
     /// <summary>
@@ -273,12 +312,25 @@ public class Packager {
         EditorUtility.DisplayProgressBar(title, desc, value);
     }
 
-    public static void EncodeLuaFile(string srcFile, string outFile) {
-        if (!srcFile.ToLower().EndsWith(".lua")) {
+#if DES
+    public static string strKey = "";
+#endif
+    public static void EncodeLuaFile(string srcFile, string outFile)
+    {
+        if (!srcFile.ToLower().EndsWith(".lua"))
+        {
             File.Copy(srcFile, outFile, true);
             return;
         }
-        bool isWin = true; 
+#if DES
+        if (strKey == "")
+        {
+            strKey = Util.CreateMD5Str(AppConst.LuaDESKey).Substring(0, 8);
+        }
+        byte[] outContent = Util.DESEncrypt(File.ReadAllBytes(srcFile), strKey);
+        File.WriteAllBytes(outFile, outContent);
+#else
+        bool isWin = true;
         string luaexe = string.Empty;
         string args = string.Empty;
         string exedir = string.Empty;
@@ -286,26 +338,27 @@ public class Packager {
         if (Application.platform == RuntimePlatform.WindowsEditor) {
             isWin = true;
             luaexe = "luajit.exe";
-            args = "-b -g " + srcFile + " " + outFile;
+            args = "-b " + srcFile + " " + outFile;
             exedir = AppDataPath.Replace("assets", "") + "LuaEncoder/luajit/";
         } else if (Application.platform == RuntimePlatform.OSXEditor) {
             isWin = false;
-            luaexe = "./luajit";
-            args = "-b -g " + srcFile + " " + outFile;
-            exedir = AppDataPath.Replace("assets", "") + "LuaEncoder/luajit_mac/";
+            luaexe = "./luac";
+            args = "-o " + outFile + " " + srcFile;
+            exedir = AppDataPath.Replace("assets", "") + "LuaEncoder/luavm/";
         }
         Directory.SetCurrentDirectory(exedir);
         ProcessStartInfo info = new ProcessStartInfo();
         info.FileName = luaexe;
         info.Arguments = args;
         info.WindowStyle = ProcessWindowStyle.Hidden;
-        info.UseShellExecute = isWin;
         info.ErrorDialog = true;
+        info.UseShellExecute = isWin;
         Util.Log(info.FileName + " " + info.Arguments);
 
         Process pro = Process.Start(info);
         pro.WaitForExit();
         Directory.SetCurrentDirectory(currDir);
+#endif
     }
 
     [MenuItem("LuaFramework/Build Protobuf-lua-gen File")]

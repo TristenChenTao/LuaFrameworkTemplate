@@ -41,14 +41,29 @@ namespace LuaFramework {
             }
         }
 
+#if DES
+        public string strKey = "";
+#endif
         /// <summary>
         /// 当LuaVM加载Lua文件的时候，这里就会被调用，
         /// 用户可以自定义加载行为，只要返回byte[]即可。
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        public override byte[] ReadFile(string fileName) {
-            return base.ReadFile(fileName);     
+        public override byte[] ReadFile(string fileName)
+        {
+            byte[] outContent = base.ReadFile(fileName);
+#if DES
+            if (LuaFramework.AppConst.LuaByteMode)
+            {
+                if (strKey == "")
+                {
+                    strKey = LuaFramework.Util.CreateMD5Str(LuaFramework.AppConst.LuaDESKey).Substring(0, 8);
+                }
+                return LuaFramework.Util.DESDecrypt(outContent, strKey);
+            }
+#endif
+            return outContent;
         }
     }
 }

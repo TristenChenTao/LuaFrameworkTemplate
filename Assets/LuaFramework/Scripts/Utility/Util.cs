@@ -329,5 +329,89 @@ namespace LuaFramework {
 #endif
             return true;
         }
+        public static bool StartWith (string str, string parm) {
+            return str.StartsWith (parm);
+        }
+
+        public static bool EndWith (string str, string parm) {
+            return str.EndsWith (parm);
+        }
+
+        public static string ReplaceStr (string str, string parm, string des) {
+            return str.Replace (parm, des);
+        }
+#if DES
+        ///生成一个MD5加密字符串(使用ASCII字符)
+        public static string CreateMD5Str (string content) {
+            MD5 md5 = new MD5CryptoServiceProvider ();
+            byte[] result = md5.ComputeHash (Encoding.ASCII.GetBytes (content));
+            return Encoding.ASCII.GetString (result);
+        }
+        /// 加密  
+        /// </summary>  
+        /// <param name="SourceText">需要加密的原字符串</param>  
+        /// <param name="key">秘钥</param>  
+        /// <returns></returns>  
+        public static byte[] DESEncrypt (byte[] SourceText, string key) {
+            //实现一个加密服务的类的对象，这个类提供了DES加密算法  
+            DESCryptoServiceProvider desProvider = new DESCryptoServiceProvider ();
+
+            //因为加密内容有可能包含汉字，所以用UTF8格式，将加密的字符串保存在字节数组里  
+            byte[] inputBytesArray = SourceText;
+
+            //设置算法的秘钥和初始化向量，需要转换为ASCII码的二进制数据  
+            desProvider.Key = Encoding.ASCII.GetBytes (key);
+            desProvider.IV = Encoding.ASCII.GetBytes (key);
+            desProvider.Padding = PaddingMode.ANSIX923;
+
+            //实现一个内存流写入加密后的数据  
+            MemoryStream memoryStream = new MemoryStream ();
+
+            //实现一个加密转换流，其中包含要将加密后的内容写入的内存流对象，用DESCrytoServiceProvider创建的加密器，模式为写入数据  
+            CryptoStream cryptoStream = new CryptoStream (memoryStream, desProvider.CreateEncryptor (), CryptoStreamMode.Write);
+
+            //将需要加密的字符串通过加密流写入到内存流中  
+            cryptoStream.Write (inputBytesArray, 0, inputBytesArray.Length);
+
+            //更新内存流存储块，然后清除缓存  
+            cryptoStream.FlushFinalBlock ();
+
+            //用来将加密后的数据填充为一个字符串返回  
+            return memoryStream.ToArray ();
+        }
+
+        /// <summary>  
+        /// 解密  
+        /// </summary>  
+        /// <param name="DecryptText">需要解密的字符串</param>  
+        /// <param name="sKey">秘钥</param>  
+        /// <returns></returns>  
+        public static byte[] DESDecrypt (byte[] DecryptText, string sKey) {
+            //实现一个加密服务的类的对象，这个类提供了DES加密算法  
+            DESCryptoServiceProvider des = new DESCryptoServiceProvider ();
+
+            //实现一个二进制数组保存将需要解密的字符转换为二进制后的数据，因为加密后的数据用16位字符保存，所以定义的大小为源字符串一半  
+            byte[] inputByteArray = DecryptText;
+
+            //设置秘钥和初始化向量  
+            des.Key = ASCIIEncoding.ASCII.GetBytes (sKey);
+            des.IV = ASCIIEncoding.ASCII.GetBytes (sKey);
+            des.Padding = PaddingMode.ANSIX923;
+            //用来存储解密内容的内存流  
+            MemoryStream ms = new MemoryStream ();
+
+            //加密转换流  
+            CryptoStream cs = new CryptoStream (ms, des.CreateDecryptor (), CryptoStreamMode.Write);
+
+            //转换后写入数据  
+            cs.Write (inputByteArray, 0, inputByteArray.Length);
+
+            //更新存储，清理缓存  
+            cs.FlushFinalBlock ();
+            StringBuilder ret = new StringBuilder ();
+
+            return ms.ToArray ();
+        }
+#endif
     }
 }

@@ -32,6 +32,7 @@ public class DelegateFactory
 		dict.Add(typeof(System.Action<UnityEngine.AsyncOperation>), factory.System_Action_UnityEngine_AsyncOperation);
 		dict.Add(typeof(UnityEngine.RectTransform.ReapplyDrivenProperties), factory.UnityEngine_RectTransform_ReapplyDrivenProperties);
 		dict.Add(typeof(System.Action<NotiData>), factory.System_Action_NotiData);
+		dict.Add(typeof(System.Action<UnityEngine.Object[]>), factory.System_Action_UnityEngine_Objects);
 		dict.Add(typeof(FairyGUI.EventCallback1), factory.FairyGUI_EventCallback1);
 		dict.Add(typeof(FairyGUI.EventCallback0), factory.FairyGUI_EventCallback0);
 		dict.Add(typeof(FairyGUI.ListItemRenderer), factory.FairyGUI_ListItemRenderer);
@@ -59,6 +60,7 @@ public class DelegateFactory
 		DelegateTraits<System.Action<UnityEngine.AsyncOperation>>.Init(factory.System_Action_UnityEngine_AsyncOperation);
 		DelegateTraits<UnityEngine.RectTransform.ReapplyDrivenProperties>.Init(factory.UnityEngine_RectTransform_ReapplyDrivenProperties);
 		DelegateTraits<System.Action<NotiData>>.Init(factory.System_Action_NotiData);
+		DelegateTraits<System.Action<UnityEngine.Object[]>>.Init(factory.System_Action_UnityEngine_Objects);
 		DelegateTraits<FairyGUI.EventCallback1>.Init(factory.FairyGUI_EventCallback1);
 		DelegateTraits<FairyGUI.EventCallback0>.Init(factory.FairyGUI_EventCallback0);
 		DelegateTraits<FairyGUI.ListItemRenderer>.Init(factory.FairyGUI_ListItemRenderer);
@@ -86,6 +88,7 @@ public class DelegateFactory
 		TypeTraits<System.Action<UnityEngine.AsyncOperation>>.Init(factory.Check_System_Action_UnityEngine_AsyncOperation);
 		TypeTraits<UnityEngine.RectTransform.ReapplyDrivenProperties>.Init(factory.Check_UnityEngine_RectTransform_ReapplyDrivenProperties);
 		TypeTraits<System.Action<NotiData>>.Init(factory.Check_System_Action_NotiData);
+		TypeTraits<System.Action<UnityEngine.Object[]>>.Init(factory.Check_System_Action_UnityEngine_Objects);
 		TypeTraits<FairyGUI.EventCallback1>.Init(factory.Check_FairyGUI_EventCallback1);
 		TypeTraits<FairyGUI.EventCallback0>.Init(factory.Check_FairyGUI_EventCallback0);
 		TypeTraits<FairyGUI.ListItemRenderer>.Init(factory.Check_FairyGUI_ListItemRenderer);
@@ -113,6 +116,7 @@ public class DelegateFactory
 		StackTraits<System.Action<UnityEngine.AsyncOperation>>.Push = factory.Push_System_Action_UnityEngine_AsyncOperation;
 		StackTraits<UnityEngine.RectTransform.ReapplyDrivenProperties>.Push = factory.Push_UnityEngine_RectTransform_ReapplyDrivenProperties;
 		StackTraits<System.Action<NotiData>>.Push = factory.Push_System_Action_NotiData;
+		StackTraits<System.Action<UnityEngine.Object[]>>.Push = factory.Push_System_Action_UnityEngine_Objects;
 		StackTraits<FairyGUI.EventCallback1>.Push = factory.Push_FairyGUI_EventCallback1;
 		StackTraits<FairyGUI.EventCallback0>.Push = factory.Push_FairyGUI_EventCallback0;
 		StackTraits<FairyGUI.ListItemRenderer>.Push = factory.Push_FairyGUI_ListItemRenderer;
@@ -1096,6 +1100,63 @@ public class DelegateFactory
 	}
 
 	void Push_System_Action_NotiData(IntPtr L, System.Action<NotiData> o)
+	{
+		ToLua.Push(L, o);
+	}
+
+	class System_Action_UnityEngine_Objects_Event : LuaDelegate
+	{
+		public System_Action_UnityEngine_Objects_Event(LuaFunction func) : base(func) { }
+		public System_Action_UnityEngine_Objects_Event(LuaFunction func, LuaTable self) : base(func, self) { }
+
+		public void Call(UnityEngine.Object[] param0)
+		{
+			func.BeginPCall();
+			func.Push(param0);
+			func.PCall();
+			func.EndPCall();
+		}
+
+		public void CallWithSelf(UnityEngine.Object[] param0)
+		{
+			func.BeginPCall();
+			func.Push(self);
+			func.Push(param0);
+			func.PCall();
+			func.EndPCall();
+		}
+	}
+
+	public System.Action<UnityEngine.Object[]> System_Action_UnityEngine_Objects(LuaFunction func, LuaTable self, bool flag)
+	{
+		if (func == null)
+		{
+			System.Action<UnityEngine.Object[]> fn = delegate(UnityEngine.Object[] param0) { };
+			return fn;
+		}
+
+		if(!flag)
+		{
+			System_Action_UnityEngine_Objects_Event target = new System_Action_UnityEngine_Objects_Event(func);
+			System.Action<UnityEngine.Object[]> d = target.Call;
+			target.method = d.Method;
+			return d;
+		}
+		else
+		{
+			System_Action_UnityEngine_Objects_Event target = new System_Action_UnityEngine_Objects_Event(func, self);
+			System.Action<UnityEngine.Object[]> d = target.CallWithSelf;
+			target.method = d.Method;
+			return d;
+		}
+	}
+
+	bool Check_System_Action_UnityEngine_Objects(IntPtr L, int pos)
+	{
+		return TypeChecker.CheckDelegateType(typeof(System.Action<UnityEngine.Object[]>), L, pos);
+	}
+
+	void Push_System_Action_UnityEngine_Objects(IntPtr L, System.Action<UnityEngine.Object[]> o)
 	{
 		ToLua.Push(L, o);
 	}
