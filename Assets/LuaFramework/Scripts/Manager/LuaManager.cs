@@ -2,6 +2,7 @@
 using System.Collections;
 using LuaInterface;
 using System;
+using System.IO;
 
 namespace LuaFramework {
     public class LuaManager : Manager {
@@ -99,27 +100,18 @@ namespace LuaFramework {
         }
 
         /// <summary>
-        /// 初始化LuaBundle
+        /// 初始化LuaBundle 
+        ///导入 lua 文件夹下 所有 *.unity3d文件
         /// </summary>
         void InitLuaBundle() {
-            if (loader.beZip) {
-                loader.AddBundle("lua/lua.unity3d");
-                loader.AddBundle("lua/lua_math.unity3d");
-                loader.AddBundle("lua/lua_system.unity3d");
-                loader.AddBundle("lua/lua_system_reflection.unity3d");
-                loader.AddBundle("lua/lua_unityengine.unity3d");
-                loader.AddBundle("lua/lua_common.unity3d");
-                loader.AddBundle("lua/lua_logic.unity3d");
-                loader.AddBundle("lua/lua_view.unity3d");
-                loader.AddBundle("lua/lua_controller.unity3d");
-                loader.AddBundle("lua/lua_misc.unity3d");
-
-                loader.AddBundle("lua/lua_protobuf.unity3d");
-                loader.AddBundle("lua/lua_3rd_cjson.unity3d");
-                loader.AddBundle("lua/lua_3rd_luabitop.unity3d");
-                loader.AddBundle("lua/lua_3rd_pbc.unity3d");
-                loader.AddBundle("lua/lua_3rd_pblua.unity3d");
-                loader.AddBundle("lua/lua_3rd_sproto.unity3d");
+            string path = Util.DataPath + "lua";
+            if (loader.beZip && Directory.Exists(path)) {
+                DirectoryInfo root = new DirectoryInfo(path);
+                foreach (FileInfo f in  root.GetFiles()) {
+                    if (f.Name.EndsWith(".unity3d")) {
+                     loader.AddBundle("lua/"+f.Name);
+                    }
+                }
             }
         }
 
