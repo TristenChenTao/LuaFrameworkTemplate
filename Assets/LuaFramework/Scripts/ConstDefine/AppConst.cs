@@ -42,6 +42,9 @@ namespace LuaFramework {
         // public const bool ForceUpdateMode = true;                    //强制更新模式   <打包>
         // public static string ForceUpdataUrl = URL_Domain+"/Version/VersionUpdate"; //强制更新url地址  <打包>
 
+        public const int designResolutionX = 1080;
+        public const int designResolutionY = 1920;
+
         /// <summary>
         /// 如果想删掉框架自带的例子，那这个例子模式必须要
         /// 关闭，否则会出现一些错误。

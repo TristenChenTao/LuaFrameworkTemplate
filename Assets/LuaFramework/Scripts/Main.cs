@@ -10,10 +10,6 @@ namespace LuaFramework {
         void Start() {
             Loom.Initialize();
             Screen.orientation = ScreenOrientation.AutoRotation;  
-            Screen.autorotateToLandscapeLeft = true;  
-            Screen.autorotateToLandscapeRight = true;  
-            Screen.autorotateToPortrait = false;  
-            Screen.autorotateToPortraitUpsideDown = false;  
             AppFacade.Instance.StartUp();   //启动游戏
         }
     }
