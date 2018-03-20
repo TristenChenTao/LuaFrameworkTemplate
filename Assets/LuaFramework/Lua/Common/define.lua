@@ -18,9 +18,16 @@ EventTypes = {
 	Download = "download",
 	Share = "Share",
 	WechatPay = "WechatPay",
-	AliPay = "AliPay"
-
+	AliPay = "AliPay",
+	IosPurchase = "IosPurchase"
 }
+
+PayManager.URL_Domain = "http://test.wolf.esgame.com" ;
+PayManager.WXRecharge = "/Account/WXRecharge";
+PayManager.ZfbRecharge = "/Account/ZfbRecharge";
+PayManager.iosPurchaseRecharge = "/Account/VerifyReceipt";
+
+
 --支付平台类型
 PayType=
 {

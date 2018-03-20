@@ -22,6 +22,7 @@ public static class LuaBinder
 		MessageQueueWrap.Register(L);
 		CustomCSharpMethodWrap.Register(L);
 		TimerCountDownWrap.Register(L);
+		PayManagerWrap.Register(L);
 		ViewWrap.Register(L);
 		BaseWrap.Register(L);
 		ManagerWrap.Register(L);

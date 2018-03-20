@@ -27,10 +27,16 @@ function LoginPanel:BindEvent()
 
     )
 
+    self.IosPay.onClick:Add(
+        function()  
+            Event.Brocast(EventTypes.IosPurchase, "event with message")      
+        end
+    )
+
+
     self.ailPay.onClick:Add(
         function()
             
-
             Event.Brocast(EventTypes.AliPay, "event with message")
         end
     )

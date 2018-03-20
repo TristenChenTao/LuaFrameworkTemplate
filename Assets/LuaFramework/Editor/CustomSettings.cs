@@ -248,6 +248,7 @@ public static class CustomSettings
         //custom extension
         _GT(typeof(CustomCSharpMethod)),
         _GT(typeof(TimerCountDown)),
+        _GT(typeof(PayManager)),
     };
 
     public static List<Type> dynamicList = new List<Type>()

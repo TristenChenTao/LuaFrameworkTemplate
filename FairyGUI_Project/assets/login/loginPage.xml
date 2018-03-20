@@ -29,7 +29,10 @@
     <component id="n10_ipb0" name="download" src="ytwi2" xy="33,1415" controller="c1,2">
       <gearDisplay controller="c1" pages=""/>
     </component>
-    <component id="n11_ipb0" name="share" src="ytwi2" xy="33,1615" controller="c1,3"/>
+    <component id="n11_ipb0" name="share" src="ytwi2" xy="35,1609" controller="c1,3"/>
     <loader id="n15_ipb0" name="image" xy="345,1234" size="456,371"/>
+    <component id="n17_ifui" name="IosPay" src="ytwi1" xy="548,998">
+      <Button title="Ios内购" titleFontSize="30"/>
+    </component>
   </displayList>
 </component>

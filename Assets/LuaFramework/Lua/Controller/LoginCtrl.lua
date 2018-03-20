@@ -46,6 +46,13 @@ function LoginCtrl:Awake()
         end
     )
     Event.AddListener(
+        EventTypes.IosPurchase,
+        function(...)
+            this:HandleIosPurchase(...)
+        end
+    )
+
+    Event.AddListener(
         EventTypes.AliPay,
         function(...)
             this:HandleAliPay(...)
@@ -135,23 +142,45 @@ function LoginCtrl:HandleShare(value1)
     ThirdPlatformTool.Share(ThirdPlatformType.WeChat, content, this.ShareResponse)
 end
 
+function LoginCtrl:HandleIosPurchase(value1)
+    log("IosPurchase")
+    local payManager = PayManager.GetInstence()
+    local ProductID = { "YYM1", "YYM6", "YYM30", "YYM68", "YYM128", "YYM648" }
+    for i,v in ipairs(ProductID) do
+        PayManager.addIosPurpase(v)
+    end
+    local currentProduct = ProductID[indexOfList]
+    print(cjson.encode(currentProduct))
+    payManager:Pay(
+        currentProduct,
+       "",
+       "",
+       function()
+        ShowCommonPop("支付成功")
+           print("支付成功")
+       end,
+       function()
+        ShowCommonPop("支付失败")
+         print("支付失败")
+       end
+   )  
+end
 
 function LoginCtrl:HandleWechatPay(value1)
     log("WechatPay")
     local token = "6a9fa9c7-771d-4bfe-a6c0-fe2ad8483f20"
-    local PayTypePlatform = PayTypePlatformType.android .. ""
     local PayType =  PayType.Wechat .. ""
     local productId = "YYM1"
+
     PayManager.GetInstence():Pay(
-         token,
-        PayTypePlatform,
-        PayType,
         productId,
+         token,
+        PayType,
         function()
-            Debug.Log("支付成功")
+            print("支付成功")
         end,
         function()
-            Debug.Log("支付失败")
+            print("支付失败")
         end
     )
 end
@@ -160,19 +189,18 @@ end
 function LoginCtrl:HandleAliPay(value1)
     log("AliPay111")
     local token = "6a9fa9c7-771d-4bfe-a6c0-fe2ad8483f20"
-    local PayTypePlatform = PayTypePlatformType.android .. ""
-    local PayType = PayType.AliPay .. ""
+    local PayType =  PayType.AliPay .. ""
     local productId = "YYM1"
+
     PayManager.GetInstence():Pay(
-        token,
-        PayTypePlatform,
-        PayType,
         productId,
+         token,
+        PayType,
         function()
-            Debug.Log("支付成功")
+            print("支付成功")
         end,
         function()
-            Debug.Log("支付失败")
+            print("支付失败")
         end
     )
 end
