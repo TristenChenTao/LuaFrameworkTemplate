@@ -221,7 +221,7 @@ GComponent loadingView;
         if ("更新完成!".Equals (message) && count == 0) {
             pb.value = 100;
             count++;
-            view.Dispose ();
+            // view.Dispose ();
             Debug.Log ("更新完成!!");
         }
         // GUI.Label(new Rect(10, 120, 960, 50), message);
