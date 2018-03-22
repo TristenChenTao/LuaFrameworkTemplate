@@ -125,9 +125,17 @@ public class PurchaseManager : MonoBehaviour, IStoreListener {
     IEnumerator SendPostIos (string _url, WWWForm _wForm) {
         WWW postData = new WWW (_url, _wForm);
         yield return postData;
-        if (postData.error != null) {
+        Hashtable d = (Hashtable)MiniJSON.jsonDecode(postData.text);
+    
+        if (postData.error != null || Convert.ToInt32(d["ResultCode"])  == 0) {
             Debug.Log ("Unity 网络请求失败:" + postData.error);
-            mfailure.Call ("验证失败");
+            if(d["Data"] != null) {
+                mfailure.Call (Convert.ToString(d["Data"]));
+            }
+            else {
+                mfailure.Call ("验证失败");
+            }
+            
         } else {
             mSuccess.Call ("支付成功");
             deleteReceiptString ();
