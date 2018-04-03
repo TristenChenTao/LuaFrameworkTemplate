@@ -7,7 +7,7 @@ using System.Net.Sockets;
 using System.Threading;
 using LuaFramework;
 using UnityEngine;
-
+using System.Runtime.InteropServices;
 public enum DisType {
     Exception,
     Disconnect,
@@ -54,6 +54,42 @@ public class SocketClient {
 
     }
 
+#if UNITY_IPHONE && !UNITY_EDITOR
+    [DllImport ("__Internal")]
+    private static extern string getIPv6 (string mHost, string mPort);
+#endif
+
+    //"192.168.1.1&&ipv4"
+    public static string GetIPv6 (string mHost, string mPort) {
+#if UNITY_IPHONE && !UNITY_EDITOR
+        string mIPv6 = getIPv6 (mHost, mPort);
+        return mIPv6;
+#else
+        return mHost + "&&ipv4";
+#endif
+    }
+
+    void getIPType (String serverIp, String serverPorts, out String newServerIp, out AddressFamily mIPType) {
+        mIPType = AddressFamily.InterNetwork;
+        newServerIp = serverIp;
+        try {
+            string mIPv6 = GetIPv6 (serverIp, serverPorts);
+            if (!string.IsNullOrEmpty (mIPv6)) {
+                string[] m_StrTemp = System.Text.RegularExpressions.Regex.Split (mIPv6, "&&");
+                if (m_StrTemp != null && m_StrTemp.Length >= 2) {
+                    string IPType = m_StrTemp[1];
+                    if (IPType == "ipv6") {
+                        newServerIp = m_StrTemp[0];
+                        mIPType = AddressFamily.InterNetworkV6;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Debug.Log ("GetIPv6 error:" + e);
+        }
+
+    }
+
     /// <summary>
     /// 注册代理
     /// </summary>
@@ -83,6 +119,7 @@ public class SocketClient {
         client = null;
 
         Loom.QueueOnMainThread (() => {
+
             PingTool.StartPing (host, (pingTime) => {
                 AddEvent (Protocal.PingTime, "" + pingTime);
             });
@@ -92,16 +129,20 @@ public class SocketClient {
         AddEvent (Protocal.ClientLog, host + ":" + port + " 开始 ConnectServer 连接服务器");
         Debug.LogWarning ("ConnectServer 连接服务器");
         try {
+            String newServerIp = "";
+            AddressFamily newAddressFamily = AddressFamily.InterNetwork;
+
+            getIPType (host, "" + port, out newServerIp, out newAddressFamily);
+            if (!string.IsNullOrEmpty (newServerIp)) { host = newServerIp; }
+
             IPAddress[] address = Dns.GetHostAddresses (host);
             if (address.Length == 0) {
                 Debug.LogError ("host invalid");
                 return;
             }
-            if (address[0].AddressFamily == AddressFamily.InterNetworkV6) {
-                client = new TcpClient (AddressFamily.InterNetworkV6);
-            } else {
-                client = new TcpClient (AddressFamily.InterNetwork);
-            }
+    
+            client = new TcpClient (newAddressFamily);
+
             client.SendTimeout = 1000;
             client.ReceiveTimeout = 1000;
             client.NoDelay = true;
@@ -413,13 +454,14 @@ public class SocketClient {
     ///<summary>
     public void RecoverConnect () {
         lock (clock_object) {
-            if(loggedIn == false) {
+            if (loggedIn == false) {
                 return;
             }
 
             Loom.QueueOnMainThread (() => {
                 if (Application.internetReachability == UnityEngine.NetworkReachability.NotReachable) {
                     Debug.Log ("网络已断开，请检查网络");
+                    onConnection = false;
                     AddEvent (Protocal.NotReachable, "网络已断开，请检查网络");
                 } else {
                     AddEvent (Protocal.Reachable, "有网络");
@@ -475,8 +517,9 @@ public class SocketClient {
             Loom.QueueOnMainThread (() => {
                 if (Application.internetReachability == UnityEngine.NetworkReachability.NotReachable) {
                     Debug.Log ("网络已断开，请检查网络");
+                    onConnection = false;
                     AddEvent (Protocal.NotReachable, "网络已断开，请检查网络");
-                       if (sendConnectTimer != null) {
+                    if (sendConnectTimer != null) {
                         sendConnectTimer.Stop ();
                         sendConnectTimer = null;
                     }

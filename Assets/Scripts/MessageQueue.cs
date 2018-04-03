@@ -17,69 +17,53 @@ public class MessageQueue : MonoBehaviour {
     private static LuaFunction _callbackForLua = null; //lua 方法回调
     private static System.Action<string, string> _callbackForCSharp = null; //C# 方法回调
     private static GameObject _myGameObject = null;
-    static Queue<MessageEvent> mEvents = new Queue<MessageEvent> ();
-
-    private static Thread _CheckCommandThread;
-
-    private static bool  isRuning;
-
-    public static void StartQueue (System.Action<string, string> callback) {
-        MessageQueue.initData ();
-        _callbackForCSharp = callback;
-        _CheckCommandThread = new Thread (CheckCommand);
-        _CheckCommandThread.IsBackground = true;
-		 isRuning = true;
-        _CheckCommandThread.Start ();
-       
-    }
+    static List<MessageEvent> mEvents = new List<MessageEvent> ();
 
     public static void StartQueue (LuaFunction callback) {
         MessageQueue.initData ();
         _callbackForLua = callback;
-        _CheckCommandThread = new Thread (CheckCommand);
-        _CheckCommandThread.IsBackground = true;
-		 isRuning = true;
-        _CheckCommandThread.Start ();
-       
     }
 
-    static void CheckCommand () {
+    double totalTime = 0;
 
-		
-        while (isRuning) {
-            try {
-                while (mEvents.Count > 0) {
-                    MessageEvent topEvent = mEvents.Dequeue ();
-                    string key = topEvent.key;
-                    string value = topEvent.value;
-                    if (topEvent.delayTime > 0) {
-                        int delayTime = (int) (topEvent.delayTime * 1000);
+    MessageEvent topEvent = null;
+    bool hasDone = false;
 
-                        if (topEvent.delayBefore) {
-                            System.Threading.Thread.Sleep (delayTime);
-                            Debug.Log ("MessageQueue: " + System.DateTime.Now.ToLongTimeString () + " : key is " + key + " value is " + value);
-                            Loom.QueueOnMainThread (() => {
-                                MessageQueue.callMethod (key, value);
-                            });
+    private void Update () {
+        try {
 
-                        } else {
-                            Debug.Log ("MessageQueue: " + System.DateTime.Now.ToLongTimeString () + " : key is " + key + " value is " + value);
-                            Loom.QueueOnMainThread (() => {
-                                MessageQueue.callMethod (key, value);
-                            });
-
-                            System.Threading.Thread.Sleep (delayTime);
-                        }
-                    } else {
-                        Debug.Log ("MessageQueue: " + System.DateTime.Now.ToLongTimeString () + " : key is " + key + " value is " + value);
-                        Loom.QueueOnMainThread (() => {
-                            MessageQueue.callMethod (key, value);
-                        });
-                    }
-                }
-            } catch {
-
+            if (mEvents.Count < 0) {
+                return;
             }
+
+            if (topEvent == null) {
+                topEvent = mEvents[0];
+                hasDone = false;
+                if (topEvent.delayBefore == false) {
+                    Debug.Log ("MessageQueue: " + System.DateTime.Now.ToLongTimeString () +
+                        " : key is " + topEvent.key + " value is " + topEvent.value);
+                    MessageQueue.callMethod (topEvent.key, topEvent.value);
+                    hasDone = true;
+                    totalTime = 0;
+                }
+            }
+            totalTime += Time.deltaTime;
+            if (totalTime >= topEvent.delayTime) {
+                if (hasDone == false) {
+                    Debug.Log ("MessageQueue: " + System.DateTime.Now.ToLongTimeString () +
+                        " : key is " + topEvent.key + " value is " + topEvent.value);
+                    MessageQueue.callMethod (topEvent.key, topEvent.value);
+                    hasDone = true;
+                }
+                
+                mEvents.RemoveAt(0);
+                topEvent = null;
+                totalTime = 0;
+                hasDone = true;
+            }
+
+        } catch {
+
         }
     }
 
@@ -98,12 +82,10 @@ public class MessageQueue : MonoBehaviour {
 
     public static void ClearQueue () {
         mEvents.Clear ();
-        isRuning = false;
-        if (_CheckCommandThread != null) {
-         _CheckCommandThread.Abort ();
-		 _CheckCommandThread=null;
-        }
+    }
 
+    public static void ClearEvents () {
+        mEvents.Clear ();
     }
 
     public static void addEvent (string key, string value, double delayTime = 0, bool delayBefore = true) {
@@ -115,7 +97,7 @@ public class MessageQueue : MonoBehaviour {
             newEvent.delayTime = delayTime;
             newEvent.delayBefore = delayBefore;
 
-            mEvents.Enqueue (newEvent);
+            mEvents.Add (newEvent);
         }
     }
     public static void callMethod (string key, string value) {
